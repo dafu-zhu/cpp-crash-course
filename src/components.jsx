@@ -157,7 +157,20 @@ export function Hw({num,title,desc,practice}){
   </div>);
 }
 
-// ─── Render text with code blocks and line breaks ───
+// ─── Render inline code ───
+function renderInlineCode(text,keyPrefix=""){
+  if(!text)return text;
+  const parts=text.split(/(`[^`]+`)/g);
+  return parts.map((p,i)=>{
+    if(p.startsWith("`")&&p.endsWith("`")){
+      const code=p.slice(1,-1);
+      return <code key={`${keyPrefix}-${i}`} style={{background:"rgba(255,255,255,0.08)",padding:"2px 6px",borderRadius:4,fontFamily:"'Consolas',monospace",fontSize:"0.9em",color:C.ct}}>{code}</code>;
+    }
+    return <span key={`${keyPrefix}-${i}`}>{p}</span>;
+  });
+}
+
+// ─── Render text with code blocks, inline code, and line breaks ───
 function RenderText({text}){
   if(!text)return text;
   // Handle code blocks
@@ -168,8 +181,8 @@ function RenderText({text}){
       return <pre key={i} style={{background:C.code,padding:"12px 14px",borderRadius:8,margin:"8px 0",fontSize:13,fontFamily:"'Consolas',monospace",color:C.ct,whiteSpace:"pre-wrap",overflowX:"auto",border:`1px solid ${C.bd}`}}>{code}</pre>;
     }
     // Handle line breaks in regular text
-    if(!p.includes("\n"))return <span key={i}>{p}</span>;
-    return <span key={i}>{p.split("\n").map((line,j,arr)=><span key={j}>{line}{j<arr.length-1&&<br/>}</span>)}</span>;
+    if(!p.includes("\n"))return <span key={i}>{renderInlineCode(p,`p${i}`)}</span>;
+    return <span key={i}>{p.split("\n").map((line,j,arr)=><span key={j}>{renderInlineCode(line,`p${i}l${j}`)}{j<arr.length-1&&<br/>}</span>)}</span>;
   });
 }
 
