@@ -13,12 +13,18 @@ import module6 from "./data/module6";
 
 const MODULES = [module1, module2, module3, module4, module5, module6];
 
+// ─── Storage Key ───
+const STORAGE_KEY = "cpp-crash-course:progress";
+
 // ─── MAIN APP ───
 export default function App(){
   const[mod,setMod]=useState(null);
   const[sec,setSec]=useState(0);
-  const[done,setDone]=useState({});
+  const[done,setDone]=useState(()=>{
+    try{const saved=localStorage.getItem(STORAGE_KEY);return saved?JSON.parse(saved):{};}catch{return{};}
+  });
   const ref=useRef(null);
+  useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(done));}catch{}},[done]);
   const total=MODULES.reduce((s,m)=>s+m.sections.length,0);
   const dn=Object.keys(done).length;
   const pct=Math.round((dn/total)*100);

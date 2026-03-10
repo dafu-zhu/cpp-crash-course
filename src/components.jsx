@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // ─── Color Palette ───
 export const C = {
@@ -158,9 +158,11 @@ export function Hw({num,title,desc,practice}){
 }
 
 // ─── Quiz (Rule: end of each topic) ───
-export function Quiz({questions}){
-  const[a,setA]=useState({});
-  const[s,setS]=useState(false);
+export function Quiz({questions,id}){
+  const key=useMemo(()=>`cpp-quiz:${id||questions[0]?.q?.slice(0,30)||"default"}`,[id,questions]);
+  const[a,setA]=useState(()=>{try{const d=localStorage.getItem(key);return d?JSON.parse(d).a:{};}catch{return{};}});
+  const[s,setS]=useState(()=>{try{const d=localStorage.getItem(key);return d?JSON.parse(d).s:false;}catch{return false;}});
+  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify({a,s}));}catch{}},[key,a,s]);
   const score=Object.entries(a).filter(([k,v])=>questions[+k]&&v===questions[+k].a).length;
   return(<div style={{marginTop:28,background:C.card,borderRadius:12,padding:22,border:`1px solid ${C.bd}`}}>
     <h3 style={{color:C.y,margin:"0 0 16px",fontSize:16}}>📝 Quick Quiz</h3>
@@ -181,8 +183,10 @@ export function Quiz({questions}){
 }
 
 // ─── Milestone Checklist (Rule 7) ───
-export function Checklist({items}){
-  const[checked,setChecked]=useState({});
+export function Checklist({items,id}){
+  const key=useMemo(()=>`cpp-checklist:${id||items[0]?.slice(0,30)||"default"}`,[id,items]);
+  const[checked,setChecked]=useState(()=>{try{const d=localStorage.getItem(key);return d?JSON.parse(d):{};}catch{return{};}});
+  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(checked));}catch{}},[key,checked]);
   const done=Object.values(checked).filter(Boolean).length;
   return(<div style={{margin:"20px 0",background:C.card,borderRadius:12,padding:20,border:`1px solid ${C.bd}`}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
