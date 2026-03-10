@@ -157,6 +157,19 @@ export function Hw({num,title,desc,practice}){
   </div>);
 }
 
+// ─── Render text with code blocks ───
+function RenderText({text}){
+  if(!text||!text.includes("```"))return text;
+  const parts=text.split(/(```[\s\S]*?```)/g);
+  return parts.map((p,i)=>{
+    if(p.startsWith("```")){
+      const code=p.replace(/```\w*\n?/,"").replace(/```$/,"");
+      return <pre key={i} style={{background:C.code,padding:"12px 14px",borderRadius:8,margin:"8px 0",fontSize:13,fontFamily:"'Consolas',monospace",color:C.ct,whiteSpace:"pre-wrap",overflowX:"auto",border:`1px solid ${C.bd}`}}>{code}</pre>;
+    }
+    return <span key={i}>{p}</span>;
+  });
+}
+
 // ─── Quiz (Rule: end of each topic) ───
 export function Quiz({questions,id}){
   const key=useMemo(()=>`cpp-quiz:${id||questions[0]?.q?.slice(0,30)||"default"}`,[id,questions]);
@@ -167,15 +180,15 @@ export function Quiz({questions,id}){
   return(<div style={{marginTop:28,background:C.card,borderRadius:12,padding:22,border:`1px solid ${C.bd}`}}>
     <h3 style={{color:C.y,margin:"0 0 16px",fontSize:16}}>📝 Quick Quiz</h3>
     {questions.map((q,qi)=>(<div key={qi} style={{marginBottom:22}}>
-      <div style={{color:C.t,fontSize:14,marginBottom:10,fontWeight:600}}>{qi+1}. {q.q}</div>
+      <div style={{color:C.t,fontSize:14,marginBottom:10,fontWeight:600}}>{qi+1}. <RenderText text={q.q}/></div>
       {q.o.map((opt,oi)=>{const sel=a[qi]===oi,ok=s&&oi===q.a,bad=s&&sel&&oi!==q.a;
         return(<div key={oi} onClick={()=>!s&&setA(p=>({...p,[qi]:oi}))} style={{padding:"9px 14px",marginBottom:5,borderRadius:8,cursor:s?"default":"pointer",
           background:ok?"rgba(46,204,113,0.12)":bad?"rgba(231,76,60,0.12)":sel?"rgba(124,108,240,0.15)":"rgba(255,255,255,0.02)",
           border:`1px solid ${ok?C.g:bad?C.r:sel?C.accent:"transparent"}`,color:C.t,fontSize:13.5,display:"flex",alignItems:"center",gap:10}}>
           <span style={{width:24,height:24,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",
-            background:sel?C.accent:"rgba(255,255,255,0.06)",fontSize:11,fontWeight:700,color:sel?"white":C.td,flexShrink:0}}>{String.fromCharCode(65+oi)}</span>{opt}
+            background:sel?C.accent:"rgba(255,255,255,0.06)",fontSize:11,fontWeight:700,color:sel?"white":C.td,flexShrink:0}}>{String.fromCharCode(65+oi)}</span><RenderText text={opt}/>
         </div>);})}
-      {s&&a[qi]!==undefined&&a[qi]!==q.a&&q.e&&<div style={{fontSize:12.5,color:C.o,marginTop:6,paddingLeft:34}}>💡 {q.e}</div>}
+      {s&&a[qi]!==undefined&&a[qi]!==q.a&&q.e&&<div style={{fontSize:12.5,color:C.o,marginTop:6,paddingLeft:34}}>💡 <RenderText text={q.e}/></div>}
     </div>))}
     <button onClick={()=>{if(s){setA({});setS(false)}else setS(true)}} style={{padding:"10px 28px",background:s?C.bd:C.accent,color:"white",border:"none",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:600}}>
       {s?`Score: ${score}/${questions.length} — Try Again`:"Check Answers"}</button>
