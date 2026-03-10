@@ -166,7 +166,7 @@ Initially all zeros (agent knows nothing). Through repeated episodes, the table 
 
 <H>Extensions</H>
 <Step n={4} title="Discount factor (γ): future rewards worth less">
-Formula: G_t = R_{t+1} + γ·R_{t+2} + γ²·R_{t+3} + ... Multiply reward by γ^k at each backward step (k = steps until end). Encourages shorter paths.
+{"Formula: G_t = R_{t+1} + γ·R_{t+2} + γ²·R_{t+3} + ... Multiply reward by γ^k at each backward step (k = steps until end). Encourages shorter paths."}
 </Step>
 
 <Step n={5} title="Exploration vs Exploitation">
