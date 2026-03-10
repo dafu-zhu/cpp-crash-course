@@ -34,6 +34,7 @@ const module3 = {id:3,title:"Memory Management",sub:"Lec 3 · Special Members, P
 <Quiz questions={[
   {q:"Why does push_back create an extra copy?",o:["It's a bug in C++","push_back stores a COPY of the object inside the vector, using the copy constructor","The Stock class is broken","const reference prevents copies"],a:1},
   {q:"If we add 100 stocks to the portfolio, how many Stock objects exist?",o:["100","200 (100 originals + 100 copies in the vector)","50","It depends"],a:1},
+  {q:"Consider:\n```cpp\nStock s1(\"MSFT\", 500, 10);\nvector<Stock> v;\nv.push_back(s1);\n```\nHow many constructor and destructor calls occur in total (across the full program)?",o:["1 constructor, 1 destructor","1 constructor, 1 copy constructor, 2 destructors","2 constructors, 1 destructor","1 constructor, 2 destructors"],a:1,e:"s1 is constructed (1 constructor). push_back copies s1 into the vector (1 copy constructor). Both the original and the copy are destroyed (2 destructors)."},
 ]}/>
 </>)},
 
@@ -71,6 +72,7 @@ It takes one parameter: a <B>const reference</B> to another object of the same t
 <Quiz questions={[
   {q:"Why must the copy constructor parameter be const reference?",o:["const: so we don't change the source. Reference: passing by value would require a copy constructor (infinite recursion!)","It's just convention","The compiler requires it but there's no real reason","To save typing"],a:0},
   {q:"Can a copy constructor access private members of the 'other' parameter?",o:["No — private means no access","Yes — special member functions have special access to same-class objects","Only with friend declaration","Only through getters"],a:1},
+  {q:"Given the Student class below, which operation does Line 2 use?\n```cpp\nint main() {\n    Student s1(\"Jane\", 22);    // Line 1\n    Student s2 = s1;           // Line 2\n}\n```",o:["Constructor and assignment operator","Copy constructor and assignment operator","Copy constructor only","Assignment operator only"],a:2,e:"Student s2 = s1 creates a NEW object from an existing one — this is copy construction, not assignment. Assignment would be: Student s2; s2 = s1; (s2 already exists)."},
 ]}/>
 </>)},
 
@@ -142,6 +144,8 @@ It takes one parameter: a <B>const reference</B> to another object of the same t
   {q:"Why does operator= return Stock& instead of void?",o:["Performance","To support chained assignment: s3 = s2 = s1","The compiler requires it","To avoid copying"],a:1},
   {q:"What does `this != &other` check?",o:["If the values are different","If the objects are at different memory addresses (different objects)","If the types are different","If the pointers are null"],a:1,e:"Two objects are the same if and only if they share the same memory address."},
   {q:"In `return *this;` — what does *this give you?",o:["The address of the object","The object itself (dereferenced from the this pointer)","A copy of the object","nullptr"],a:1},
+  {q:"Consider:\n```cpp\nStock s1(\"MSFT\", 500, 1);\nStock s2(\"GOOG\", 250, 2);\nStock s3;\ns3 = s2 = s1;\n```\nAfter this code, what symbol does s3 hold?",o:["GOOG","MSFT","Empty string","Compile error"],a:1,e:"s2 = s1 copies s1's data into s2 (including MSFT) and returns s2. Then s3 = s2 copies that into s3. All three now hold MSFT."},
+  {q:"What happens if operator= does NOT have a self-assignment check and you write `s1 = s1` where s1 manages a dynamically allocated resource?",o:["Nothing — it works fine","The resource may be freed and then accessed, causing undefined behavior","Compile error","The object is destroyed"],a:1,e:"Without the check, the operator may delete the resource (thinking it's the 'old' data) then try to copy from the now-deleted resource."},
 ]}/>
 </>)},
 
@@ -207,6 +211,8 @@ Stock::Stock(Stock&& other)
   {q:"When should you use move instead of copy?",o:["Always","When the source object is a temporary that will be destroyed anyway","When the object is small","Move is always slower"],a:1},
   {q:"What does std::move actually do?",o:["Physically moves memory","Casts its argument to an rvalue reference (enabling move operations)","Deletes the original","Creates a deep copy"],a:1},
   {q:"For `int x`, is there any difference between copying and moving?",o:["Yes, moving is faster","No — for fundamental types, move = copy (both are just a CPU instruction)","Moving is impossible for ints","Moving sets x to 0"],a:1},
+  {q:"Consider:\n```cpp\nStock s1(\"MSFT\", 500, 1);\nStock s2 = std::move(s1);\ncout << s1.get_symbol() << endl;\n```\nWhat happens to s1.symbol_ after the move?",o:["Still \"MSFT\"","Empty string — the move constructor stole the string's internal buffer","Compile error","Undefined behavior"],a:1,e:"std::move casts s1 to an rvalue reference, triggering the move constructor. The string's internal buffer is transferred to s2, leaving s1.symbol_ empty."},
+  {q:"Which of the following correctly describes `= delete`?\n```cpp\nStock(const Stock&) = delete;\n```",o:["Deletes the object","Forbids copying — any code that tries to copy a Stock gets a compile error","Deletes the copy constructor's memory","Makes copying optional"],a:1,e:"= delete explicitly forbids a special member function. Attempting to use it causes a compile error."},
 ]}/>
 </>)},
 
@@ -278,6 +284,8 @@ Stock::Stock(Stock&& other)
   {q:"An automatic object is destroyed:",o:["When you call delete","When it goes out of scope","When main() ends","Never"],a:1},
   {q:"What does the 'new' keyword return?",o:["The object itself","The ADDRESS of the object (a pointer)","void","A reference"],a:1},
   {q:"What happens if you forget 'delete'?",o:["The compiler catches it","Memory leak — memory is never freed","The object is destroyed at program end","Nothing, C++ handles it"],a:1},
+  {q:"Consider:\n```cpp\nStock* s = new Stock(\"MSFT\", 500, 1);\ncout << s->get_symbol() << endl;\ndelete s;\ncout << s->get_symbol() << endl;\n```\nWhat happens on the last line?",o:["Prints MSFT again","Undefined behavior — s points to freed memory","Compile error","Prints empty string"],a:1,e:"After delete, s is a dangling pointer — the memory it points to has been freed. Dereferencing it is undefined behavior."},
+  {q:"Based on what we discussed in class, using the `delete` keyword:",o:["Removes a variable from scope","Deallocates memory previously allocated with new, calling the destructor","Removes an element from a vector","Deletes a file from disk"],a:1,e:"delete frees heap memory allocated by new. For arrays allocated with new[], use delete[]."},
 ]}/>
 </>)},
 
@@ -351,6 +359,8 @@ Since destructors run automatically when objects go out of scope, resources are 
   {q:"What does RAII stand for?",o:["Reference Acquisition Is Immediate","Resource Acquisition Is Initialization","Runtime Allocation Is Implicit","Random Access Is Indexed"],a:1},
   {q:"Which smart pointer cannot be copied?",o:["shared_ptr","unique_ptr","weak_ptr","All can be copied"],a:1,e:"unique_ptr has exclusive ownership — copying would create two owners. You can only MOVE it."},
   {q:"Why use make_shared instead of `new`?",o:["make_shared is faster and exception-safe (single allocation)","There is no difference","make_shared is required by the compiler","new doesn't work with shared_ptr"],a:0},
+  {q:"Consider:\n```cpp\nauto s1 = make_shared<Stock>(\"MSFT\", 500, 1);\nauto s2 = s1;\nauto s3 = s1;\ns2.reset();\n```\nAfter this code, is the Stock object still alive?",o:["No — s2 was reset so the object is deleted","Yes — s1 and s3 still point to it (ref count = 2)","Undefined behavior","Compile error"],a:1,e:"s2.reset() decrements the reference count from 3 to 2. The object is only deleted when the count reaches 0."},
+  {q:"Based on our class discussions, which of the following are examples of RAII?\n\nA. Using shared_ptr to manage heap memory\nB. Using ifstream to manage file handles\nC. Manually calling delete in the destructor\nD. Using the `new` keyword",o:["A, B, C, D","A, B only","A, B, C","C, D"],a:1,e:"RAII means acquiring resources in the constructor and releasing in the destructor automatically. shared_ptr and ifstream do this. Manual delete and new are what RAII replaces."},
 ]}/>
 
 <Checklist items={[

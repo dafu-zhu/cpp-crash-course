@@ -78,6 +78,8 @@ In large programs, separating output (cout), errors (cerr), and logs (clog) help
   {q:"What does stod() do?",o:["String to double","String to date","Stream to double"],a:0},
   {q:"File I/O uses RAII. This means:",o:["Files are opened and closed manually","Files open in constructor, close automatically in destructor","Files never close","RAII is a file format"],a:1},
   {q:"cerr vs cout: cerr is:",o:["Faster","Unbuffered — output appears immediately, good for errors","Only for numbers","The same as cout"],a:1},
+  {q:"Consider:\n```cpp\nstring line = \"MSFT,500.0,10\";\nistringstream iss(line);\nstring field;\nint count = 0;\nwhile (getline(iss, field, ',')) {\n    count++;\n}\ncout << count << endl;\n```\nWhat is printed?",o:["1","2","3","0"],a:2,e:"getline with ',' delimiter splits the string at each comma: \"MSFT\", \"500.0\", \"10\" → 3 fields."},
+  {q:"Based on what we discussed in class, which statement about RAII for files is true?\n\nA. Using RAII to manage files involves the programmer explicitly calling close().\nB. ifstream uses RAII — the file closes automatically when the stream goes out of scope.\nC. RAII for files only works with ofstream, not ifstream.\nD. RAII requires manual memory management.",o:["A and D","B only","A, B, C","B and C"],a:1,e:"RAII for files means the destructor automatically closes the file. No explicit close() needed."},
 ]}/>
 </>)},
 
@@ -128,6 +130,9 @@ sort(prices.begin(), prices.end());
 <Quiz questions={[
   {q:"accumulate(v.begin(), v.end(), 0.0) computes:",o:["Average","Sum starting from 0.0","Count","Maximum"],a:1},
   {q:"find() returns v.end() when:",o:["Element is found at end","Element not found","Vector is empty","Always"],a:1,e:"v.end() is the past-the-end iterator — a sentinel meaning 'not found.'"},
+  {q:"Consider:\n```cpp\nvector<double> v{1.5, 2.5, 3.0};\nint sum = accumulate(v.begin(), v.end(), 0);\ncout << sum << endl;\n```\nWhat is printed?",o:["7.0","7","6","Compile error"],a:2,e:"The initial value 0 is an int, so accumulate performs integer addition. 0+1.5→1 (truncated), 1+2.5→3, 3+3.0→6. Use 0.0 for double accumulation."},
+  {q:"Consider:\n```cpp\nvector<int> v{10, 20, 30, 40, 50};\nauto it = find(v.begin(), v.end(), 25);\nif (it != v.end())\n    cout << *it;\nelse\n    cout << \"Not found\";\n```\nWhat is printed?",o:["25","20","Not found","Compile error"],a:2,e:"25 is not in the vector. find returns v.end(), so the else branch executes."},
+  {q:"After calling `sort(v.begin(), v.end())` on v = {300, 100, 250, 150}, what is v[0]?",o:["300","100","150","250"],a:1,e:"sort arranges in ascending order by default. v becomes {100, 150, 250, 300}."},
 ]}/>
 </>)},
 
@@ -175,6 +180,8 @@ return iter->second;`}/>
   {q:"Why catch exceptions by const reference?",o:["It's faster","Avoids copy, preserves polymorphism, prevents slicing","Compiler requires it","No difference"],a:1},
   {q:"e.what() returns:",o:["The exception type","The error message string","The line number"],a:1},
   {q:"If an exception is thrown inside try, what happens to code after the throw?",o:["It still runs","It's skipped — control jumps to catch","It runs after catch","Undefined behavior"],a:1},
+  {q:"Consider:\n```cpp\ntry {\n    cout << \"A\";\n    throw runtime_error(\"oops\");\n    cout << \"B\";\n} catch (const runtime_error& e) {\n    cout << \"C\";\n}\ncout << \"D\";\n```\nWhat is printed?",o:["ABCD","ACD","ABD","AC"],a:1,e:"A is printed, then the exception is thrown (B is skipped), caught (C is printed), then execution continues after the catch block (D is printed)."},
+  {q:"Consider:\n```cpp\ncatch (const exception& e) { cout << \"general\"; }\ncatch (const runtime_error& e) { cout << \"specific\"; }\n```\nIf a runtime_error is thrown, what is printed?",o:["specific","general","both","Compile error or warning"],a:1,e:"First-fit rule: handlers are checked in order. exception& matches runtime_error (since it inherits from exception), so 'general' is printed. The specific handler is never reached. Always put specific catches BEFORE general ones."},
 ]}/>
 </>)},
 
@@ -258,6 +265,8 @@ Due: February 11`} practice={`Build a GradeBook application:
   {q:"Can a const object call a non-const member function?",o:["Yes","No — const objects can ONLY call const member functions"],a:1},
   {q:"Why is operator<< a friend non-member instead of a member?",o:["It's faster","As a member, usage would be s << cout (backwards)","Friends are always better","It must return void"],a:1},
   {q:"What does 'mutable' allow?",o:["Makes a variable const","Allows modification of a member even inside a const member function","Prevents modification","Creates a copy"],a:1},
+  {q:"Consider:\n```cpp\nclass Stock {\npublic:\n    double get_price() { return price_; }\nprivate:\n    double price_;\n};\n\nconst Stock s(\"MSFT\", 500, 1);\ncout << s.get_price();\n```\nWhat happens?",o:["Prints 500","Compile error — get_price() is not marked const","Runtime error","Prints 0"],a:1,e:"s is const, but get_price() doesn't promise not to modify the object. Fix: double get_price() const;"},
+  {q:"Which of the following is the correct signature for operator<< overloading?\n\nA. `ostream& operator<<(ostream& os, const Stock& s)`\nB. `void Stock::operator<<(ostream& os)`\nC. `ostream& Stock::operator<<(const Stock& s)`\nD. `void operator<<(const Stock& s)`",o:["A — non-member, returns ostream& for chaining","B — member function returning void","C — member function","D — non-member returning void"],a:0,e:"operator<< must be a non-member so that cout comes first (cout << s). It returns ostream& for chaining (cout << s1 << s2)."},
 ]}/>
 
 <Checklist items={[

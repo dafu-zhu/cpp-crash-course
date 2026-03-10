@@ -110,6 +110,8 @@ Can you add new features without rewriting everything? We'll see this powerfully
   {q:"What is the entry point of every C++ program?",o:["start()","begin()","main()","run()"],a:2},
   {q:"What does #include <iostream> do?",o:["Imports the iostream library at runtime","Copies the iostream header content into your file before compilation","Creates a new iostream object","Links to the iostream binary"],a:1,e:"#include is a preprocessor directive — it happens BEFORE compilation."},
   {q:"What is the preferred way to use cout without std:: prefix?",o:["using namespace std;","using std::cout;","import cout;","#define cout std::cout"],a:1,e:"The professor recommends importing individual names, not the entire namespace."},
+  {q:"A missing function body (defined in a header but never implemented) causes an error at which stage?",o:["Preprocessing","Compilation","Linking","Runtime"],a:2,e:"The linker resolves references to function definitions. A missing body means the linker can't find the symbol."},
+  {q:"Consider:\n```cpp\nint main() {\n    cout << \"Hello\";\n    return 0;\n}\n```\nThis program fails to compile. Why?",o:["main() must return void","cout is not declared — missing #include <iostream> and using std::cout","return 0 is not allowed","Strings must use single quotes"],a:1,e:"Without #include <iostream> and a using declaration, cout is unknown to the compiler."},
 ]}/>
 </>)},
 
@@ -226,6 +228,10 @@ double CallPrice(StockPrice s,
   {q:"What does `int y = x++;` produce when x is 3?",o:["y=4, x=4","y=3, x=4","y=3, x=3","Compile error"],a:1,e:"Postfix: returns old value (3) to y, THEN increments x to 4."},
   {q:"Why can't you compare doubles with ==?",o:["Doubles can't be compared","Many decimal values can't be stored exactly in binary","The compiler doesn't allow it","It's slower than using <"],a:1},
   {q:"Is std::string a fundamental type?",o:["Yes","No — it's from the Standard Library"],a:1},
+  {q:"Consider:\n```cpp\nint a = 7, b = 2;\ncout << a / b << endl;\n```\nWhat is printed?",o:["3.5","3","4","Compile error"],a:1,e:"Both operands are integers → integer division. 7/2 = 3 (decimal truncated). Use static_cast<double>(a)/b to get 3.5."},
+  {q:"Consider:\n```cpp\nint x = 5;\nint y = ++x;\nint z = x++;\ncout << x << \" \" << y << \" \" << z;\n```\nWhat is printed?",o:["7 6 6","6 5 6","7 5 6","6 6 5"],a:0,e:"++x increments x to 6 then assigns y=6. x++ assigns z=6 (current value) then increments x to 7."},
+  {q:"Which of the following correctly converts integer division to floating-point division?",o:["(double)(a / b)","static_cast<double>(a) / b","double(a / b)","a / b * 1.0"],a:1,e:"static_cast<double>(a) converts a to double BEFORE division. (double)(a/b) converts AFTER integer division already happened."},
+  {q:"What does const do when applied to a variable?",o:["Makes it global","Prevents the variable from being modified after initialization","Makes it faster","Converts it to a string"],a:1},
 ]}/>
 
 <Checklist items={[
@@ -304,6 +310,8 @@ double CallPrice(StockPrice s,
   {q:"Can two functions have the same name?",o:["Never","Yes, if parameter types differ","Yes, if return types differ"],a:1},
   {q:"Which bracket style includes a Standard Library header?",o:['#include "iostream"','#include <iostream>'],a:1,e:'<> for standard/system headers, "" for your own project headers.'},
   {q:"A function that doesn't return anything uses which return type?",o:["null","int","void","auto"],a:2},
+  {q:"Consider:\n```cpp\nint multiply(int a, int b) { return a * b; }\ndouble multiply(double a, double b) { return a * b; }\n\nint main() {\n    cout << multiply(3, 4) << endl;\n    cout << multiply(2.5, 4.0) << endl;\n}\n```\nWhat values are printed?",o:["12 then 10.0","12 then 10","Compile error — duplicate function names","12.0 then 10.0"],a:0,e:"The compiler selects the int version for (3,4) → 12, and the double version for (2.5,4.0) → 10.0. This is function overloading."},
+  {q:"A function is declared in add.h but its body is only in add.cpp. If main.cpp includes add.h but you forget to compile add.cpp, you get:",o:["A preprocessing error","A compile error","A linker error — unresolved symbol","A runtime error"],a:2,e:"The compiler accepts the declaration from the header, but the linker cannot find the definition."},
 ]}/>
 </>)},
 
@@ -388,6 +396,9 @@ The professor explicitly called these "very common interview questions":{"\n\n"}
   {q:"What is the best way to pass a large read-only object to a function?",o:["By value","By reference","By const reference","By pointer"],a:2},
   {q:"Can you rebind a reference to a different variable?",o:["Yes","No"],a:1},
   {q:"How many bytes does passing a 1000×1000 double matrix by const reference copy?",o:["8 million","4 million","8 bytes (just the reference)","0 — references are aliases"],a:3,e:"A reference is just another name for the same memory. The 'copying' that's avoided is the data itself."},
+  {q:"Consider:\n```cpp\nvoid increment(int& n) { n = n + 1; }\n\nint main() {\n    int x = 10;\n    increment(x);\n    cout << x << endl;\n}\n```\nWhat is printed?",o:["10","11","Compile error","Undefined behavior"],a:1,e:"n is a reference to x — modifying n modifies x directly. This is pass by reference."},
+  {q:"Consider:\n```cpp\nvoid increment(int n) { n = n + 1; }\n\nint main() {\n    int x = 10;\n    increment(x);\n    cout << x << endl;\n}\n```\nWhat is printed?",o:["10","11","Compile error","Undefined behavior"],a:0,e:"n is a COPY of x (pass by value). Modifying the copy doesn't affect the original. x remains 10."},
+  {q:"Which of the following about references is true?\n\nA. A reference can be nullptr.\nB. A reference must be initialized when declared.\nC. A reference can be reassigned to refer to a different variable.\nD. A reference creates a separate copy of the variable.",o:["A and C","B only","B and D","All of the above"],a:1,e:"References must be bound at initialization and cannot be rebound. They cannot be null and are aliases, not copies."},
 ]}/>
 </>)},
 
@@ -520,6 +531,10 @@ Test all three with user input from cin. For swap, print values before and after
   {q:"In `const int* ptr`, what is const?",o:["The pointer itself","The value it points to","Both","Neither"],a:1,e:"const LEFT of * → value is const. The pointer can still be repointed."},
   {q:"What should you initialize an unused pointer to?",o:["0","NULL","nullptr","Leave uninitialized"],a:2,e:"nullptr (C++11) is the modern way. It's type-safe, unlike 0 or NULL."},
   {q:"Array index in C++ starts at:",o:["0","1","Depends on the compiler","You choose"],a:0},
+  {q:"Consider:\n```cpp\nint x = 10;\nint* px = &x;\n*px = 20;\ncout << x << endl;\n```\nWhat is printed?",o:["10","20","The address of x","Compile error"],a:1,e:"px points to x. *px = 20 writes 20 to the memory location x occupies. So x is now 20."},
+  {q:"Consider the pointer declaration: `int* const ptr = &x;`\nWhich operations are allowed?",o:["*ptr = 32 (change value) and ptr = &y (repoint)","*ptr = 32 only (value is mutable, pointer is const)","ptr = &y only (pointer is mutable, value is const)","Neither — both are const"],a:1,e:"const RIGHT of * → the pointer itself is const (can't repoint). But the value pointed to is NOT const (can change)."},
+  {q:"Consider:\n```cpp\nvoid swap(int* a, int* b) {\n    int temp = *a;\n    *a = *b;\n    *b = temp;\n}\n\nint main() {\n    int x = 4, y = 5;\n    swap(&x, &y);\n    cout << x << \" \" << y;\n}\n```\nWhat is printed?",o:["4 5","5 4","Compile error","Undefined behavior"],a:1,e:"The swap function dereferences the pointers to exchange values. &x and &y pass the addresses of x and y."},
+  {q:"What happens if you dereference a pointer that was never initialized?\n```cpp\nint* p;\ncout << *p;\n```",o:["Prints 0","Prints a random value","Undefined behavior — may crash or corrupt data","Compile error"],a:2,e:"Uninitialized pointers hold garbage addresses. Dereferencing is undefined behavior. Always initialize to nullptr."},
 ]}/>
 
 <Checklist items={[

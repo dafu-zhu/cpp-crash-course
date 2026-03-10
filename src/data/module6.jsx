@@ -100,6 +100,8 @@ auto beta = lr.coefficients();`}
   {q:"Eigen::Map creates a view over existing memory. Does it copy data?",o:["Yes, it makes a full copy","No — it wraps existing memory with zero copy","It copies only if the vector is large"],a:1},
   {q:"Why add a column of 1s to the feature matrix?",o:["For padding","To represent the intercept term (bias) in linear regression","Eigen requires it","To normalize features"],a:1},
   {q:"colPivHouseholderQr().solve(y) solves:",o:["Eigenvalue decomposition","Least squares: min ||Xβ - y||²","Matrix inversion","Singular value decomposition"],a:1},
+  {q:"Consider:\n```cpp\nvector<double> prices = {100.0, 102.0, 101.5};\nEigen::Map<const Eigen::VectorXd> view(prices.data(), prices.size());\n```\nWhat does prices.data() return?",o:["A copy of the vector","A raw pointer to the vector's internal memory buffer","The first element","An iterator"],a:1,e:".data() returns a pointer to the underlying contiguous array. Eigen::Map wraps this pointer without copying."},
+  {q:"The Eigen library is 'header-only.' This means:",o:["You can only use it in header files","No compilation or linking of library code is needed — just include the headers","It only works with Visual Studio","It doesn't support templates"],a:1,e:"Header-only libraries require no separate compilation step. Just point your include path to the Eigen directory."},
 ]}/>
 </>)},
 
@@ -178,6 +180,8 @@ Exploitation: always pick the action with highest Q (greedy). Exploration: somet
   {q:"Why update Q-table backward through the episode?",o:["It's faster","We only know the final outcome (goal/hole) at the end","The compiler requires it","Random order works too"],a:1},
   {q:"The backward RL update is conceptually similar to:",o:["Forward pass in neural network","Backward induction in binomial tree","Sorting a vector","CSV parsing"],a:1},
   {q:"Epsilon-greedy balances:",o:["Speed and accuracy","Exploration (random actions) and exploitation (best known action)","Memory and CPU","Training and testing"],a:1},
+  {q:"In the Frozen Lake Q-learning, the Q-table has dimensions 16×4. What do the 16 rows and 4 columns represent?",o:["16 episodes and 4 rewards","16 states (grid cells) and 4 actions (left/down/right/up)","16 features and 4 targets","16 agents and 4 environments"],a:1,e:"The 4×4 grid has 16 states. At each state, the agent can take 4 actions: Left, Down, Right, Up."},
+  {q:"In the incremental average update:\n`Q[s][a] += (reward - Q[s][a]) / visits[s][a]`\nWhat does this formula compute?",o:["The maximum reward","The running average of rewards for state-action pair (s,a)","The discount factor","The learning rate"],a:1,e:"This is the incremental mean formula. Each new reward shifts Q toward the actual mean, with the step size decreasing as visits increase."},
 ]}/>
 </>)},
 
@@ -230,6 +234,9 @@ The right choice depends on: access pattern (random vs sequential), insertion/de
   {q:"Which container should be your default choice?",o:["std::array","std::vector","std::map","std::list"],a:1},
   {q:"std::list provides fast O(1) insertion but lacks:",o:["Iterators","Random access (no operator[])","The ability to store objects","Destructors"],a:1},
   {q:"std::map is implemented using:",o:["Hash table","Balanced tree (Red-Black Tree)","Array","Linked list"],a:1},
+  {q:"You need to frequently insert/delete elements in the MIDDLE of a container. Which is the best choice?",o:["std::vector — fast random access","std::list — O(1) insert/delete once at position","std::array — fixed size, fastest","std::map — sorted keys"],a:1,e:"Vector requires shifting all subsequent elements for mid-container inserts (O(n)). List can insert/delete in O(1) once you have an iterator to the position."},
+  {q:"You need O(1) average-case lookup by key, and order doesn't matter. Which container?",o:["std::map (O(log n), sorted)","std::unordered_map (O(1) average, hash table)","std::vector (O(n) search)","std::set (O(log n), sorted)"],a:1,e:"unordered_map uses a hash table for O(1) average lookup. map uses a balanced tree for O(log n) lookup but maintains order."},
+  {q:"What is the key difference between std::array and std::vector?",o:["array can store objects, vector cannot","array size is fixed at compile time; vector can grow dynamically","vector is faster than array","array is from C, vector is from C++"],a:1},
 ]}/>
 </>)},
 
@@ -275,6 +282,8 @@ Each FIX concept is modeled as a class.
 <Quiz questions={[
   {q:"In QuickFIX, different FIX versions (4.0, 4.2, 4.4) use:",o:["Different class names","Namespaces (FIX40::, FIX42::, FIX44::)","Templates","Inheritance only"],a:1},
   {q:"The Application class in QuickFIX is:",o:["Concrete","Abstract — trading apps must override its pure virtual callbacks","A struct","A template"],a:1},
+  {q:"The FIX trading system demonstrates multiple C++ concepts. Which of the following OOP features does it use?\n\nA. Inheritance (Message → NewOrderSingle)\nB. Polymorphism (virtual fromApp callback)\nC. Namespaces (FIX40::, FIX42::)\nD. Encapsulation (private order fields)",o:["A and B only","A, B, C only","A, B, C, D — all four","C and D only"],a:2,e:"The FIX system uses inheritance for message types, polymorphism for application callbacks, namespaces for protocol versions, and encapsulation for data protection."},
+  {q:"Briefly, two key differences between pointers and references in C++ are:\n\nA. A pointer can be nullptr; a reference must be bound to a valid object.\nB. A pointer can be reassigned; a reference cannot be re-bound.\nC. References are faster than pointers.\nD. Pointers use more memory than references.",o:["A and B","C and D","A, B, C, D","A and C"],a:0,e:"The two fundamental differences: (1) nullability — pointers can be null, references cannot. (2) rebindability — pointers can be reassigned, references are bound once."},
 ]}/>
 </>)},
 

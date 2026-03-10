@@ -83,6 +83,8 @@ Use protected for base class data that derived classes need (like K_ and T_ in t
   {q:"'class Student : public Person' means:",o:["Student contains a Person","Student IS-A Person (inherits all Person members)","Person inherits from Student","Student replaces Person"],a:1},
   {q:"protected members are accessible by:",o:["Anyone","Only the class itself","The class itself AND derived classes","Only derived classes"],a:2},
   {q:"In a derived constructor, the base constructor is called:",o:["After the derived body","In the member initializer list, before own members","Automatically with no arguments","It's not called"],a:1},
+  {q:"Consider:\n```cpp\nclass Person {\nprivate:\n    string name_;\n};\nclass Student : public Person {\npublic:\n    void print() { cout << name_; }\n};\n```\nWhat happens?",o:["Prints the name","Compile error — name_ is private in Person, not accessible by Student","Runtime error","Prints empty string"],a:1,e:"Private members are invisible to derived classes. Change to protected if Student needs direct access."},
+  {q:"Which of the following about inheritance is true?\n\nA. A derived class inherits all members from the base class.\nB. Inheritance promotes code reuse.\nC. A derived class can access private members of the base class.\nD. Adding a new derived class requires modifying the base class.",o:["A, B, C, D","A, B only","A, B, C","B, C, D"],a:1,e:"Derived classes inherit all members but cannot access private ones. Adding new derived classes doesn't modify the base — that's extensibility."},
 ]}/>
 </>)},
 
@@ -137,6 +139,8 @@ You CANNOT create objects of an abstract class. You can only create objects of c
   {q:"A pure virtual function has:",o:["A default implementation","= 0 (no implementation, derived MUST provide one)","override keyword","No return type"],a:1},
   {q:"An abstract class:",o:["Has all functions implemented","Has at least one pure virtual function and CANNOT be instantiated","Cannot have any data members","Must be derived from another abstract class"],a:1},
   {q:"The override keyword:",o:["Creates a new virtual function","Tells compiler 'I'm overriding a base virtual function' — catches signature mismatches","Makes a function pure virtual","Is required for all virtual functions"],a:1},
+  {q:"Consider:\n```cpp\nclass Shape {\npublic:\n    virtual double area() const = 0;\n    virtual ~Shape() = default;\n};\nclass Circle : public Shape {\n    double r_;\npublic:\n    Circle(double r) : r_(r) {}\n    double area() const override { return 3.14159 * r_ * r_; }\n};\n\nShape s;          // Line A\nCircle c(5.0);    // Line B\n```\nWhich line causes a compile error?",o:["Line A — Shape is abstract (has pure virtual function)","Line B — Circle doesn't implement area()","Both lines","Neither line"],a:0,e:"Shape has a pure virtual function (area() = 0), making it abstract. You cannot create objects of abstract classes."},
+  {q:"If a derived class does NOT implement a pure virtual function from the base, the derived class is:",o:["Concrete — it can be instantiated","Also abstract — it cannot be instantiated","Invalid — compile error on the class definition","Automatically deleted"],a:1,e:"A class with unimplemented pure virtual functions is abstract, regardless of whether it defined the = 0 itself or inherited it."},
 ]}/>
 </>)},
 
@@ -281,6 +285,9 @@ Gamma for vanilla is shared; gamma for binary is different.`}/>
 <Quiz questions={[
   {q:"Polymorphism requires:",o:["Templates","Virtual functions + base class pointer or reference","Operator overloading","Friend functions"],a:1},
   {q:"If you add a new option type (AsianCall), do existing pricers need modification?",o:["Yes","No — polymorphism handles it automatically through base class interface"],a:1},
+  {q:"Consider:\n```cpp\nOption* opt = new EuropeanCall(100, 1);\ncout << opt->price(100, 0.05, 0.3) << endl;\ndelete opt;\n```\nWhich price() function is called?",o:["Option::price() (base class)","EuropeanCall::price() (derived class)","Compile error — Option is abstract","Depends on the compiler"],a:1,e:"Polymorphism: the correct derived function is chosen at RUNTIME based on the actual type of the object (EuropeanCall), not the pointer type (Option*)."},
+  {q:"If Option's destructor is NOT virtual, what happens when you call `delete opt` (where opt is Option* pointing to EuropeanCall)?",o:["Both destructors run correctly","Only ~Option() runs — ~EuropeanCall() is SKIPPED → undefined behavior","Only ~EuropeanCall() runs","Compile error"],a:1,e:"Without a virtual destructor, delete through a base pointer only calls the base destructor. Derived resources are leaked. Always use virtual ~Option() = default;"},
+  {q:"Consider:\n```cpp\nvoid print_price(const Option& opt, double S, double r, double v) {\n    cout << opt.price(S, r, v) << endl;\n}\n\nEuropeanCall call(100, 1);\nEuropeanPut put(100, 1);\nprint_price(call, 100, 0.05, 0.3);\nprint_price(put, 120, 0.1, 0.4);\n```\nThis works because:",o:["Templates","Polymorphism — base reference calls correct derived function","Operator overloading","Function overloading"],a:1,e:"A base reference (const Option&) can bind to any derived type. The virtual price() function dispatches to the correct implementation at runtime."},
 ]}/>
 </>)},
 
@@ -340,6 +347,8 @@ Verify CI narrows as M increases.`}/>
   {q:"In the MC pricer, option.get_expiration_payoff(ST) uses:",o:["Template metaprogramming","Polymorphism — the correct derived payoff is called through base reference","Operator overloading","Static dispatch"],a:1},
   {q:"Using a fixed seed gives:",o:["Better random numbers","Reproducible results (same sequence every run)","Faster execution","True randomness"],a:1},
   {q:"To reduce MC error by half, you need:",o:["2× more paths","4× more paths","10× more paths","Same paths, different seed"],a:1,e:"ε = ω/√M. Halving ε requires quadrupling M."},
+  {q:"In the GBM formula S_T = S₀ · exp((r − σ²/2)·T + σ·√T·z), what distribution does z follow?",o:["Uniform(0,1)","Normal(0,1) — standard normal","Exponential(1)","Poisson(1)"],a:1,e:"z is drawn from a standard normal distribution using mt19937 engine + normal_distribution."},
+  {q:"The MC pricer takes `const Option&` as parameter. What is the advantage of this design?",o:["It's faster than passing by value","It works with ANY option type (Call, Put, Barrier, etc.) through polymorphism — without rewriting the pricer","It prevents the option from being modified","All of the above"],a:3,e:"const prevents modification, reference avoids copying, and base class reference enables polymorphism with any derived option type."},
 ]}/>
 </>)},
 
@@ -509,6 +518,8 @@ cout << v.capacity(); // implementation-defined (often 1 or 2)`}/>
 <Quiz questions={[
   {q:"reserve(10) vs resize(10):",o:["They're the same","reserve allocates space only (size=0); resize creates 10 elements (size=10)","reserve creates elements; resize allocates space","Neither changes the vector"],a:1},
   {q:"Why is push_back sometimes expensive?",o:["It sorts the vector","When capacity is full, it must allocate new memory, copy all elements, and free old memory","It locks the vector","It's always cheap"],a:1},
+  {q:"Consider:\n```cpp\nvector<int> v;\nv.reserve(100);\ncout << v.size() << \" \" << v.capacity();\n```\nWhat is printed?",o:["100 100","0 100","0 0","100 0"],a:1,e:"reserve allocates space for 100 elements (capacity=100) but creates none (size=0). The elements don't exist yet."},
+  {q:"Consider:\n```cpp\nvector<int> v;\nv.reserve(10);\nv[0] = 42;\ncout << v[0];\n```\nWhat happens?",o:["Prints 42","Undefined behavior — reserve doesn't create elements, size is still 0","Compile error","Prints 0"],a:1,e:"After reserve, capacity=10 but size=0. Accessing v[0] is undefined behavior because no element exists at index 0. Use resize or push_back instead."},
 ]}/>
 </>)},
 
