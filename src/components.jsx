@@ -113,7 +113,7 @@ export function Prof({children}){return <div style={{margin:"14px 0",padding:"14
 export function Exam({children}){return <div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(231,76,60,0.06)",borderLeft:`4px solid ${C.r}`,borderRadius:"0 10px 10px 0",fontSize:15.5,color:C.t,lineHeight:1.75}}><b style={{color:C.r}}>⚠️ Exam/Interview: </b>{children}</div>;}
 
 // ─── Key Concept Tip ───
-export function Tip({title,children}){return <div style={{margin:"14px 0",padding:"16px 18px",background:"rgba(46,204,113,0.06)",borderLeft:`4px solid ${C.g}`,borderRadius:"0 10px 10px 0"}}><div style={{fontWeight:700,color:C.g,fontSize:15.5,marginBottom:6}}>💡 {title}</div><div style={{fontSize:15.5,color:C.t,lineHeight:1.8}}>{children}</div></div>;}
+export function Tip({title,children}){return <div style={{margin:"14px 0",padding:"16px 18px",background:"rgba(46,204,113,0.06)",borderLeft:`4px solid ${C.g}`,borderRadius:"0 10px 10px 0"}}><div style={{fontWeight:700,color:C.g,fontSize:15.5,marginBottom:6}}>💡 {title}</div><div style={{fontSize:15.5,color:C.t,lineHeight:1.8,whiteSpace:"pre-line"}}>{children}</div></div>;}
 
 // ─── Common Confusion (Rule 5) ───
 export function Confusion({mistake,why}){
