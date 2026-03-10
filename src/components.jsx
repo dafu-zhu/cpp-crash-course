@@ -157,16 +157,19 @@ export function Hw({num,title,desc,practice}){
   </div>);
 }
 
-// ─── Render text with code blocks ───
+// ─── Render text with code blocks and line breaks ───
 function RenderText({text}){
-  if(!text||!text.includes("```"))return text;
+  if(!text)return text;
+  // Handle code blocks
   const parts=text.split(/(```[\s\S]*?```)/g);
   return parts.map((p,i)=>{
     if(p.startsWith("```")){
       const code=p.replace(/```\w*\n?/,"").replace(/```$/,"");
       return <pre key={i} style={{background:C.code,padding:"12px 14px",borderRadius:8,margin:"8px 0",fontSize:13,fontFamily:"'Consolas',monospace",color:C.ct,whiteSpace:"pre-wrap",overflowX:"auto",border:`1px solid ${C.bd}`}}>{code}</pre>;
     }
-    return <span key={i}>{p}</span>;
+    // Handle line breaks in regular text
+    if(!p.includes("\n"))return <span key={i}>{p}</span>;
+    return <span key={i}>{p.split("\n").map((line,j,arr)=><span key={j}>{line}{j<arr.length-1&&<br/>}</span>)}</span>;
   });
 }
 
