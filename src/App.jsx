@@ -41,7 +41,7 @@ export default function App(){
             <span style={{fontSize:13}}>{done[`${m.id}-${i}`]?"✅":"○"}</span><span style={{lineHeight:1.3}}>{x.title}</span>
           </div>))}
         </div>
-        <div ref={ref} style={{flex:1,overflowY:"auto",padding:"28px 40px 60px",maxWidth:900,margin:"0 auto"}}>
+        <div ref={ref} style={{flex:1,overflowY:"auto",padding:"28px 40px 60px",maxWidth:1100,margin:"0 auto"}}>
           <h2 style={{margin:"0 0 24px",color:m.color,fontSize:24,fontWeight:600}}>{s.title}</h2>
           {s.content}
           <div style={{display:"flex",justifyContent:"space-between",marginTop:36,paddingTop:24,borderTop:`1px solid ${C.bd}`}}>

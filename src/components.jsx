@@ -8,15 +8,15 @@ export const C = {
 };
 
 // ─── Basic Text ───
-export function P({children}){return <p style={{margin:"10px 0",lineHeight:1.85,fontSize:14.5,color:C.t}}>{children}</p>;}
-export function H({children}){return <h3 style={{color:C.accentL,margin:"30px 0 12px",fontSize:17,borderBottom:`1px solid ${C.bd}`,paddingBottom:8}}>{children}</h3>;}
+export function P({children}){return <p style={{margin:"10px 0",lineHeight:1.85,fontSize:16,color:C.t}}>{children}</p>;}
+export function H({children}){return <h3 style={{color:C.accentL,margin:"30px 0 12px",fontSize:19,borderBottom:`1px solid ${C.bd}`,paddingBottom:8}}>{children}</h3>;}
 export function B({children}){return <b style={{color:"white"}}>{children}</b>;}
 
 // ─── Code Block (Rule 1: every line justified) ───
 export function Code({code,title}){
   return(<div style={{margin:"14px 0",borderRadius:10,overflow:"hidden",border:`1px solid ${C.bd}`}}>
     {title&&<div style={{background:C.bd,padding:"7px 16px",fontSize:11,color:C.td,fontFamily:"monospace"}}>{title}</div>}
-    <pre style={{background:C.code,color:C.ct,padding:"16px 18px",fontSize:12.5,fontFamily:"'Consolas','Courier New',monospace",overflowX:"auto",margin:0,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{code}</pre>
+    <pre style={{background:C.code,color:C.ct,padding:"16px 18px",fontSize:14,fontFamily:"'Consolas','Courier New',monospace",overflowX:"auto",margin:0,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{code}</pre>
   </div>);
 }
 
@@ -28,8 +28,8 @@ export function AnnotatedCode({lines, title}){
     <div style={{background:C.code,padding:"8px 0"}}>
       {lines.map((l,i)=>(
         <div key={i} style={{display:"flex",borderBottom:i<lines.length-1?`1px solid ${C.bd}`:"none",minHeight:36}}>
-          <div style={{flex:"0 0 55%",padding:"8px 16px",fontFamily:"'Consolas',monospace",fontSize:12.5,color:C.ct,whiteSpace:"pre-wrap",lineHeight:1.6}}>{l.code}</div>
-          <div style={{flex:"0 0 45%",padding:"8px 14px",fontSize:12,color:C.y,lineHeight:1.5,borderLeft:`1px solid ${C.bd}`,display:"flex",alignItems:"center"}}>
+          <div style={{flex:"0 0 55%",padding:"8px 16px",fontFamily:"'Consolas',monospace",fontSize:14,color:C.ct,whiteSpace:"pre-wrap",lineHeight:1.6}}>{l.code}</div>
+          <div style={{flex:"0 0 45%",padding:"8px 14px",fontSize:13.5,color:C.y,lineHeight:1.5,borderLeft:`1px solid ${C.bd}`,display:"flex",alignItems:"center"}}>
             <span style={{opacity:0.5,marginRight:6}}>←</span>{l.why}
           </div>
         </div>
@@ -43,9 +43,9 @@ export function Step({n,title,children}){
   return(<div style={{margin:"12px 0",background:"rgba(124,108,240,0.04)",border:`1px solid ${C.bd}`,borderRadius:10,overflow:"hidden"}}>
     <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 16px",background:"rgba(124,108,240,0.08)",borderBottom:`1px solid ${C.bd}`}}>
       <span style={{width:28,height:28,borderRadius:"50%",background:C.accent,color:"white",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,flexShrink:0}}>{n}</span>
-      <span style={{fontWeight:600,color:C.accentL,fontSize:14}}>{title}</span>
+      <span style={{fontWeight:600,color:C.accentL,fontSize:15.5}}>{title}</span>
     </div>
-    <div style={{padding:"12px 16px",fontSize:14,color:C.t,lineHeight:1.8}}>{children}</div>
+    <div style={{padding:"12px 16px",fontSize:15.5,color:C.t,lineHeight:1.8}}>{children}</div>
   </div>);
 }
 
@@ -107,20 +107,20 @@ export function Hierarchy({root,children,grandchildren}){
 }
 
 // ─── Professor Quote (per transcript) ───
-export function Prof({children}){return <div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(241,196,15,0.06)",borderLeft:`4px solid ${C.y}`,borderRadius:"0 10px 10px 0",fontSize:14,color:C.t,lineHeight:1.75}}><b style={{color:C.y}}>🎓 Professor says: </b><i>{children}</i></div>;}
+export function Prof({children}){return <div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(241,196,15,0.06)",borderLeft:`4px solid ${C.y}`,borderRadius:"0 10px 10px 0",fontSize:15.5,color:C.t,lineHeight:1.75}}><b style={{color:C.y}}>🎓 Professor says: </b><i>{children}</i></div>;}
 
 // ─── Exam/Interview Tip ───
-export function Exam({children}){return <div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(231,76,60,0.06)",borderLeft:`4px solid ${C.r}`,borderRadius:"0 10px 10px 0",fontSize:14,color:C.t,lineHeight:1.75}}><b style={{color:C.r}}>⚠️ Exam/Interview: </b>{children}</div>;}
+export function Exam({children}){return <div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(231,76,60,0.06)",borderLeft:`4px solid ${C.r}`,borderRadius:"0 10px 10px 0",fontSize:15.5,color:C.t,lineHeight:1.75}}><b style={{color:C.r}}>⚠️ Exam/Interview: </b>{children}</div>;}
 
 // ─── Key Concept Tip ───
-export function Tip({title,children}){return <div style={{margin:"14px 0",padding:"16px 18px",background:"rgba(46,204,113,0.06)",borderLeft:`4px solid ${C.g}`,borderRadius:"0 10px 10px 0"}}><div style={{fontWeight:700,color:C.g,fontSize:14,marginBottom:6}}>💡 {title}</div><div style={{fontSize:14,color:C.t,lineHeight:1.8}}>{children}</div></div>;}
+export function Tip({title,children}){return <div style={{margin:"14px 0",padding:"16px 18px",background:"rgba(46,204,113,0.06)",borderLeft:`4px solid ${C.g}`,borderRadius:"0 10px 10px 0"}}><div style={{fontWeight:700,color:C.g,fontSize:15.5,marginBottom:6}}>💡 {title}</div><div style={{fontSize:15.5,color:C.t,lineHeight:1.8}}>{children}</div></div>;}
 
 // ─── Common Confusion (Rule 5) ───
 export function Confusion({mistake,why}){
   return(<div style={{margin:"14px 0",padding:"14px 18px",background:"rgba(243,156,18,0.06)",borderLeft:`4px solid ${C.o}`,borderRadius:"0 10px 10px 0"}}>
     <div style={{fontWeight:700,color:C.o,fontSize:13,marginBottom:4}}>⚡ Common Confusion</div>
-    <div style={{fontSize:13.5,color:C.t,lineHeight:1.7}}><b>Mistake:</b> {mistake}</div>
-    <div style={{fontSize:13.5,color:C.t,lineHeight:1.7,marginTop:4}}><b>Why it's wrong:</b> {why}</div>
+    <div style={{fontSize:15,color:C.t,lineHeight:1.7}}><b>Mistake:</b> {mistake}</div>
+    <div style={{fontSize:15,color:C.t,lineHeight:1.7,marginTop:4}}><b>Why it's wrong:</b> {why}</div>
   </div>);
 }
 
