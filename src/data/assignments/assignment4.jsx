@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
 
 const assignment4 = {title:"Assignment 4: Monte Carlo Pricer",content:(<>
 <Hw num={4} title="Monte Carlo Option Pricer" desc={`Implement a Monte Carlo option pricer using modern C++ random number generation.
@@ -107,8 +107,9 @@ Test parameters:
 
 <H>Part 3: Confidence Interval</H>
 <Step n={3} title="Compute standard error and 95% CI">
-<P>Standard error: ε = σ/√M where σ is sample std dev of discounted payoffs.
-95% CI: [price − 1.96·ε, price + 1.96·ε]</P>
+<P>Standard error (<M>{"\\sigma"}</M> = sample std dev of discounted payoffs):</P>
+<M block>{"\\varepsilon = \\frac{\\sigma}{\\sqrt{M}}"}</M>
+<P>95% CI: <M>{"[\\hat{C} - 1.96\\varepsilon, \\; \\hat{C} + 1.96\\varepsilon]"}</M></P>
 </Step>
 
 <AnnotatedCode title="Computing confidence interval" lines={[

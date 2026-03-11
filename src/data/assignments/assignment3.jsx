@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
 
 const assignment3 = {title:"Assignment 3: Option Pricing with Inheritance",content:(<>
 <Hw num={3} title="Black-Scholes Pricer" desc={`Use inheritance to write an OO Black-Scholes Pricer.
@@ -99,7 +99,7 @@ Test cases:
 
 <H>Part 2: EuropeanCall Derived Class</H>
 <Step n={3} title="Implement the call pricing formula">
-<P>Call price: V = S·N(d₁) − K·e^(−rT)·N(d₂). Override price() with this formula.</P>
+<P>Call price: <M>{"V = S \\cdot N(d_1) - K \\cdot e^{-rT} \\cdot N(d_2)"}</M>. Override price() with this formula.</P>
 </Step>
 
 <AnnotatedCode title="european_call.h" lines={[

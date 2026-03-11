@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
 
 const assignment5 = {title:"Assignment 5: Extensible Multi-Method Pricer",content:(<>
 <Hw num={5} title="Extensible Pricing Engine" desc={`Create a pricing system with two independent hierarchies:
@@ -77,7 +77,7 @@ Test MC: S₀=100, σ=0.3, r=0.01, T=2, K=100, M=10000 paths`}/>
 <P>The binomial tree pricer builds a price tree and back-propagates option values.</P>
 
 <Step n={3} title="Jarrow-Rudd binomial tree">
-<P>At each node: S_up = S·exp((r-σ²/2)Δt + σ√Δt), S_down = S·exp((r-σ²/2)Δt − σ√Δt)</P>
+<M block>{"S_{\\text{up}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t + \\sigma\\sqrt{\\Delta t}}, \\quad S_{\\text{down}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t - \\sigma\\sqrt{\\Delta t}}"}</M>
 </Step>
 
 <AnnotatedCode title="jr_tree_pricer.cpp — key algorithm" lines={[

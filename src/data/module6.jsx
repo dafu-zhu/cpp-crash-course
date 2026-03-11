@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
 
 const module6 = {id:6,title:"AI, RL & Trading",sub:"Lec 8-9 · Eigen, Reinforcement Learning, FIX, Containers, VaR",icon:"🤖",color:C.y,sections:[
 
@@ -73,7 +73,7 @@ auto beta = lr.coefficients();`}
 ]}/>
 
 <H>Solving Least Squares with Householder QR</H>
-<P>Linear regression minimizes ||Xβ − y||². Direct matrix inverse is numerically unstable. Instead, use QR decomposition:</P>
+<P>Linear regression minimizes <M>{"\\|X\\beta - y\\|^2"}</M>. Direct matrix inverse is numerically unstable. Instead, use QR decomposition:</P>
 
 <AnnotatedCode title="Training: fit()" lines={[
   {code:"Eigen::MatrixXd X_aug(X.rows(), X.cols() + 1);",why:"Augment the feature matrix: add a column of 1s for the intercept term."},
@@ -168,7 +168,8 @@ Initially all zeros (agent knows nothing). Through repeated episodes, the table 
 
 <H>Extensions</H>
 <Step n={4} title="Discount factor (γ): future rewards worth less">
-{"Formula: G_t = R_{t+1} + γ·R_{t+2} + γ²·R_{t+3} + ... Multiply reward by γ^k at each backward step (k = steps until end). Encourages shorter paths."}
+<M block>{"G_t = R_{t+1} + \\gamma \\cdot R_{t+2} + \\gamma^2 \\cdot R_{t+3} + \\cdots"}</M>
+<P>Multiply reward by <M>{"\\gamma^k"}</M> at each backward step (k = steps until end). Encourages shorter paths.</P>
 </Step>
 
 <Step n={5} title="Exploration vs Exploitation">

@@ -306,7 +306,7 @@ assignment3,
 
 <H>Stock Price Simulation (GBM)</H>
 <P>Under the risk-neutral measure, stock price at time T is:</P>
-<P>S_T = S₀ · exp((r − σ²/2)·T + σ·√T·z), where z ~ N(0,1)</P>
+<M block>{"S_T = S_0 \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})T + \\sigma\\sqrt{T} \\cdot z\\right), \\quad z \\sim N(0,1)"}</M>
 
 <H>The MC Algorithm</H>
 <AnnotatedCode title="MC pricing loop" lines={[
@@ -333,8 +333,10 @@ assignment3,
 ]}/>
 
 <H>Standard Error and Confidence Interval</H>
-<P>Standard error: ε = ω/√M (where ω = sample std dev of discounted payoffs)</P>
-<P>95% confidence interval: [Ĉ − 1.96·ω/√M, Ĉ + 1.96·ω/√M]</P>
+<P>Standard error (where <M>{"\\omega"}</M> = sample std dev of discounted payoffs):</P>
+<M block>{"\\varepsilon = \\frac{\\omega}{\\sqrt{M}}"}</M>
+<P>95% confidence interval:</P>
+<M block>{"\\left[\\hat{C} - 1.96 \\cdot \\frac{\\omega}{\\sqrt{M}}, \\quad \\hat{C} + 1.96 \\cdot \\frac{\\omega}{\\sqrt{M}}\\right]"}</M>
 <P>To halve the error, you need 4× more paths.</P>
 
 <Hw num={4} title="Monte Carlo Pricer (6%)" desc={`Complete MC option pricer.
@@ -411,9 +413,9 @@ If you catch by VALUE (not reference), the derived part is <B>sliced off</B> —
 ]}/>
 
 <H>Jarrow-Rudd Model</H>
-<P>At each step, stock goes up or down with equal probability (p_up = p_down = 0.5):</P>
-<P>S_up = S · exp((r−σ²/2)Δt + σ√Δt)</P>
-<P>S_down = S · exp((r−σ²/2)Δt − σ√Δt)</P>
+<P>At each step, stock goes up or down with equal probability (<M>{"p_{\\text{up}} = p_{\\text{down}} = 0.5"}</M>):</P>
+<M block>{"S_{\\text{up}} = S \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})\\Delta t + \\sigma\\sqrt{\\Delta t}\\right)"}</M>
+<M block>{"S_{\\text{down}} = S \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})\\Delta t - \\sigma\\sqrt{\\Delta t}\\right)"}</M>
 <P>The tree <B>recombines</B>: up-then-down = down-then-up → same node. This keeps the tree manageable.</P>
 
 <H>Data Structure — Professor's Exact Design</H>
