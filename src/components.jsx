@@ -28,6 +28,26 @@ export function P({children}){return <p style={{margin:"10px 0",lineHeight:1.85,
 export function H({children}){return <h3 style={{color:C.accentL,margin:"30px 0 12px",fontSize:19,borderBottom:`1px solid ${C.bd}`,paddingBottom:8}}>{children}</h3>;}
 export function B({children}){return <b style={{color:C.t,fontWeight:700}}>{children}</b>;}
 
+// ─── LaTeX Math (KaTeX) ───
+export function M({children, block=false}){
+  const ref = useRef(null);
+  useEffect(() => {
+    if (ref.current && window.katex) {
+      try {
+        window.katex.render(children, ref.current, {
+          throwOnError: false,
+          displayMode: block
+        });
+      } catch (e) {
+        ref.current.textContent = children;
+      }
+    }
+  }, [children, block]);
+  return block
+    ? <div ref={ref} style={{margin:"16px 0",textAlign:"center",fontSize:18}} />
+    : <span ref={ref} style={{fontSize:"1em"}} />;
+}
+
 // ─── Code Block (CLion Style with Syntax Highlighting) ───
 export function Code({code,title}){
   const codeRef = useRef(null);

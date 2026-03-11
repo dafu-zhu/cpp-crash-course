@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
 import { assignment3, assignment4, assignment5 } from "./assignments";
 
 const module5 = {id:5,title:"Inheritance & Pricing",sub:"Lec 5-7 · Inheritance, Polymorphism, BS, MC, Binomial Tree",icon:"🧬",color:"#7c6cf0",sections:[
@@ -154,14 +154,14 @@ You CANNOT create objects of an abstract class. You can only create objects of c
 ]}/>
 
 <H>The Formulas</H>
-<P>Call price: V_call = S₀·N(d₁) − K·e^(−rT)·N(d₂)</P>
-<P>Put price: V_put = K·e^(−rT)·N(−d₂) − S₀·N(−d₁)</P>
-<P>Where d₁ = [ln(S·e^(rT)/K)] / (σ√T) + σ√T/2, and d₂ = d₁ − σ√T</P>
-<P>N(x) = CDF of standard normal = ½[1 + erf(x/√2)]</P>
+<M block>{"V_{\\text{call}} = S_0 \\cdot N(d_1) - K \\cdot e^{-rT} \\cdot N(d_2)"}</M>
+<M block>{"V_{\\text{put}} = K \\cdot e^{-rT} \\cdot N(-d_2) - S_0 \\cdot N(-d_1)"}</M>
+<M block>{"d_1 = \\frac{\\ln(S_0 / K) + (r + \\sigma^2/2)T}{\\sigma\\sqrt{T}}, \\quad d_2 = d_1 - \\sigma\\sqrt{T}"}</M>
+<M block>{"N(x) = \\frac{1}{2}\\left[1 + \\text{erf}\\left(\\frac{x}{\\sqrt{2}}\\right)\\right]"}</M>
 
 <H>The Greeks (Risk Sensitivities)</H>
-<P>Call Delta: N(d₁). Put Delta: N(d₁) − 1.</P>
-<P>Gamma (same for call and put): N'(d₁) / (S·σ·√T), where N'(x) = (1/√(2π))·exp(−x²/2)</P>
+<P>Call Delta: <M>{"N(d_1)"}</M>. Put Delta: <M>{"N(d_1) - 1"}</M>.</P>
+<P>Gamma (same for call and put): <M>{"\\Gamma = \\frac{N'(d_1)}{S \\cdot \\sigma \\cdot \\sqrt{T}}"}</M>, where <M>{"N'(x) = \\frac{1}{\\sqrt{2\\pi}} e^{-x^2/2}"}</M></P>
 
 <H>Math Functions from &lt;cmath&gt;</H>
 <P>sqrt(), exp(), log() (natural log), erf() (error function). C++20 also provides std::numbers::pi.</P>
