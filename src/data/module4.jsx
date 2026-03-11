@@ -1,4 +1,5 @@
 import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { assignment2 } from "./assignments";
 
 const module4 = {id:4,title:"I/O, Algorithms, Errors",sub:"Lec 4 · File I/O, STL Algorithms, Exceptions, Operators",icon:"📦",color:C.o,sections:[
 
@@ -283,7 +284,10 @@ Due: February 11`} practice={`Build a GradeBook application:
   "I can overload operator<< as a friend non-member function",
   "I know Scott Meyers' advice: use friend sparingly",
 ]}/>
-</>)}
+</>)},
+
+// Assignment 2 imported from ./assignments
+assignment2
 ]};
 
 export default module4;

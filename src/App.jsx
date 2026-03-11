@@ -63,7 +63,7 @@ export default function App(){
   return(<div style={{minHeight:"100vh",background:C.bg,color:C.t}}>
     <div style={{padding:"48px 24px 28px",textAlign:"center"}}>
       <div style={{fontSize:11,letterSpacing:4,textTransform:"uppercase",color:C.td,marginBottom:10}}>UChicago FINM 326 · Computing for Finance</div>
-      <h1 style={{fontSize:36,margin:"0 0 8px",fontWeight:300,color:"white"}}>C++ <span style={{color:C.accent,fontWeight:600}}>Crash Course</span></h1>
+      <h1 style={{fontSize:36,margin:"0 0 8px",fontWeight:300,color:C.t}}>C++ <span style={{color:C.accent,fontWeight:600}}>Crash Course</span></h1>
       <p style={{color:C.td,fontSize:14.5,maxWidth:560,margin:"0 auto 24px",lineHeight:1.7}}>An interactive step-by-step tutorial for the final exam. Every line explained. Every concept visualized.</p>
       <div style={{maxWidth:380,margin:"0 auto"}}>
         <div style={{background:C.card,borderRadius:20,height:10,overflow:"hidden"}}><div style={{background:`linear-gradient(90deg,${C.accent},${C.g})`,height:"100%",width:`${pct}%`,borderRadius:20,transition:"width 0.5s"}}/></div>
@@ -74,13 +74,13 @@ export default function App(){
       {MODULES.map(m=>{
         const md=m.sections.filter((_,i)=>done[`${m.id}-${i}`]).length;
         return(<div key={m.id} onClick={()=>setMod(m.id)} style={{background:C.card,borderRadius:14,padding:22,cursor:"pointer",border:`1px solid ${C.bd}`,transition:"all 0.2s",borderTop:`4px solid ${m.color}`}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=m.color;e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.3)"}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=m.color;e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.12)"}}
           onMouseLeave={e=>{e.currentTarget.style.borderColor=C.bd;e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=""}}>
           <div style={{display:"flex",justifyContent:"space-between"}}>
             <span style={{fontSize:30}}>{m.icon}</span>
             <span style={{fontSize:10,color:m.color,background:`${m.color}18`,padding:"3px 10px",borderRadius:12,fontWeight:700,height:"fit-content"}}>{md}/{m.sections.length}</span>
           </div>
-          <h3 style={{margin:"12px 0 4px",fontSize:16,color:"white"}}>{m.title}</h3>
+          <h3 style={{margin:"12px 0 4px",fontSize:16,color:C.t}}>{m.title}</h3>
           <div style={{fontSize:12,color:C.td,marginBottom:14,lineHeight:1.4}}>{m.sub}</div>
           <div style={{background:C.bd,borderRadius:6,height:5,overflow:"hidden"}}><div style={{background:m.color,height:"100%",width:`${(md/m.sections.length)*100}%`,transition:"width 0.3s"}}/></div>
         </div>);

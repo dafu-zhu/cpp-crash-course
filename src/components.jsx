@@ -1,36 +1,64 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
-// ─── Color Palette ───
+// ─── Color Palette (Light Mode - CLion Style) ───
 export const C = {
-  bg:"#0c0c14",card:"#161625",accent:"#7c6cf0",accentL:"#b4acfa",
-  g:"#2ecc71",r:"#e74c3c",o:"#f39c12",b:"#3498db",y:"#f1c40f",
-  t:"#ecf0f1",td:"#7f8c8d",bd:"#252540",code:"#0e0e1a",ct:"#98d4a6"
+  bg:"#f5f7fa",card:"#ffffff",accent:"#6c5ce7",accentL:"#5b4cdb",
+  g:"#067D17",r:"#e74c3c",o:"#e67e22",b:"#0033B3",y:"#871094",
+  t:"#2B2B2B",td:"#6E6E6E",bd:"#D1D1D1",code:"#FFFFFF",ct:"#2B2B2B"
 };
+
+// ─── Syntax Highlighting Hook ───
+function usePrismHighlight(ref) {
+  useEffect(() => {
+    const highlight = () => {
+      if (ref.current && window.Prism && window.Prism.languages.cpp) {
+        window.Prism.highlightElement(ref.current);
+      }
+    };
+    // Try immediately
+    highlight();
+    // Also try after a short delay in case Prism loads late
+    const timer = setTimeout(highlight, 100);
+    return () => clearTimeout(timer);
+  });
+}
 
 // ─── Basic Text ───
 export function P({children}){return <p style={{margin:"10px 0",lineHeight:1.85,fontSize:16,color:C.t}}>{children}</p>;}
 export function H({children}){return <h3 style={{color:C.accentL,margin:"30px 0 12px",fontSize:19,borderBottom:`1px solid ${C.bd}`,paddingBottom:8}}>{children}</h3>;}
-export function B({children}){return <b style={{color:"white"}}>{children}</b>;}
+export function B({children}){return <b style={{color:C.t,fontWeight:700}}>{children}</b>;}
 
-// ─── Code Block (Rule 1: every line justified) ───
+// ─── Code Block (CLion Style with Syntax Highlighting) ───
 export function Code({code,title}){
-  return(<div style={{margin:"14px 0",borderRadius:10,overflow:"hidden",border:`1px solid ${C.bd}`}}>
-    {title&&<div style={{background:C.bd,padding:"7px 16px",fontSize:11,color:C.td,fontFamily:"monospace"}}>{title}</div>}
-    <pre style={{background:C.code,color:C.ct,padding:"16px 18px",fontSize:14,fontFamily:"'Consolas','Courier New',monospace",overflowX:"auto",margin:0,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{code}</pre>
+  const codeRef = useRef(null);
+  usePrismHighlight(codeRef);
+  return(<div style={{margin:"14px 0",borderRadius:6,overflow:"hidden",border:`1px solid ${C.bd}`,boxShadow:"0 1px 3px rgba(0,0,0,0.08)"}}>
+    {title&&<div style={{background:"#F7F8FA",padding:"8px 16px",fontSize:12,color:C.td,fontFamily:"'JetBrains Mono','Consolas',monospace",borderBottom:`1px solid ${C.bd}`}}>{title}</div>}
+    <pre style={{background:C.code,padding:"16px 18px",fontSize:13,fontFamily:"'JetBrains Mono','Consolas','Courier New',monospace",overflowX:"auto",margin:0,lineHeight:1.6,whiteSpace:"pre-wrap"}}><code ref={codeRef} className="language-cpp">{code}</code></pre>
   </div>);
 }
 
-// ─── Annotated Code: each line has its own explanation (Rule 1) ───
+// ─── Annotated Code (CLion Style with Syntax Highlighting) ───
 export function AnnotatedCode({lines, title}){
-  // lines = [{code:"int x = 10;", why:"Create a variable to store..."}, ...]
-  return(<div style={{margin:"16px 0",borderRadius:10,overflow:"hidden",border:`1px solid ${C.bd}`}}>
-    {title&&<div style={{background:C.bd,padding:"7px 16px",fontSize:11,color:C.td,fontFamily:"monospace"}}>{title}</div>}
-    <div style={{background:C.code,padding:"8px 0"}}>
+  const containerRef = useRef(null);
+  useEffect(() => {
+    const highlight = () => {
+      if (containerRef.current && window.Prism && window.Prism.languages.cpp) {
+        window.Prism.highlightAllUnder(containerRef.current);
+      }
+    };
+    highlight();
+    const timer = setTimeout(highlight, 100);
+    return () => clearTimeout(timer);
+  });
+  return(<div style={{margin:"16px 0",borderRadius:6,overflow:"hidden",border:`1px solid ${C.bd}`,boxShadow:"0 1px 3px rgba(0,0,0,0.08)"}}>
+    {title&&<div style={{background:"#F7F8FA",padding:"8px 16px",fontSize:12,color:C.td,fontFamily:"'JetBrains Mono','Consolas',monospace",borderBottom:`1px solid ${C.bd}`}}>{title}</div>}
+    <div ref={containerRef} style={{background:C.code,padding:"8px 0"}}>
       {lines.map((l,i)=>(
-        <div key={i} style={{display:"flex",borderBottom:i<lines.length-1?`1px solid ${C.bd}`:"none",minHeight:36}}>
-          <div style={{flex:"0 0 55%",padding:"8px 16px",fontFamily:"'Consolas',monospace",fontSize:14,color:C.ct,whiteSpace:"pre-wrap",lineHeight:1.6}}>{l.code}</div>
-          <div style={{flex:"0 0 45%",padding:"8px 14px",fontSize:13.5,color:C.y,lineHeight:1.5,borderLeft:`1px solid ${C.bd}`,display:"flex",alignItems:"center"}}>
-            <span style={{opacity:0.5,marginRight:6}}>←</span>{l.why}
+        <div key={i} style={{display:"flex",borderBottom:i<lines.length-1?`1px solid #EAEAEA`:"none",minHeight:36}}>
+          <code className="language-cpp" style={{flex:"0 0 55%",padding:"8px 16px",fontFamily:"'JetBrains Mono','Consolas',monospace",fontSize:13,whiteSpace:"pre-wrap",lineHeight:1.6,background:"transparent"}}>{l.code}</code>
+          <div style={{flex:"0 0 45%",padding:"8px 14px",fontSize:13,color:"#067D17",background:"#FAFBFC",lineHeight:1.5,borderLeft:`1px solid #EAEAEA`,display:"flex",alignItems:"center"}}>
+            <span style={{color:"#999",marginRight:6}}>←</span>{l.why}
           </div>
         </div>
       ))}
@@ -57,7 +85,7 @@ export function Flowchart({title,steps}){
     <div style={{display:"flex",alignItems:"flex-start",justifyContent:"center",gap:8,flexWrap:"wrap"}}>
       {steps.map((s,i)=>(
         <div key={i} style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{border:`2px solid ${s.color||C.accent}`,borderRadius:10,padding:"10px 16px",textAlign:"center",background:"rgba(0,0,0,0.2)",minWidth:120}}>
+          <div style={{border:`2px solid ${s.color||C.accent}`,borderRadius:10,padding:"10px 16px",textAlign:"center",background:C.card,minWidth:120}}>
             <div style={{fontWeight:700,color:s.color||C.accent,fontSize:11,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>{s.label}</div>
             {s.items.map((it,j)=><div key={j} style={{fontSize:12.5,color:C.t,marginBottom:2}}>{it}</div>)}
           </div>
@@ -76,7 +104,7 @@ export function MemDiagram({cells,title}){
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap"}}>
       {cells.map((c,i)=>{
         if(c.type==="arrow") return <div key={i} style={{textAlign:"center",padding:"0 4px"}}><div style={{color:C.td,fontSize:20}}>→</div>{c.label&&<div style={{fontSize:10,color:C.td}}>{c.label}</div>}</div>;
-        return(<div key={i} style={{border:`2px solid ${c.color||C.accent}`,borderRadius:10,padding:"10px 16px",textAlign:"center",background:"rgba(0,0,0,0.25)",minWidth:80}}>
+        return(<div key={i} style={{border:`2px solid ${c.color||C.accent}`,borderRadius:10,padding:"10px 16px",textAlign:"center",background:C.card,minWidth:80}}>
           {c.addr&&<div style={{fontSize:9,color:C.td,fontFamily:"monospace"}}>{c.addr}</div>}
           <div style={{fontSize:20,fontWeight:700,color:c.color||C.accent}}>{c.value}</div>
           <div style={{fontSize:11,color:c.color||C.td}}>{c.label}</div>

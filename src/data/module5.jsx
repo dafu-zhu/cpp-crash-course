@@ -1,4 +1,5 @@
 import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { assignment3, assignment4, assignment5 } from "./assignments";
 
 const module5 = {id:5,title:"Inheritance & Pricing",sub:"Lec 5-7 · Inheritance, Polymorphism, BS, MC, Binomial Tree",icon:"🧬",color:"#7c6cf0",sections:[
 
@@ -219,6 +220,9 @@ Gamma for vanilla is shared; gamma for binary is different.`}/>
 ]}/>
 </>)},
 
+// Assignment 3 imported from ./assignments
+assignment3,
+
 // ═══════ 5.4 UNIT TESTING ═══════
 {title:"Unit Testing (Catch2)",content:(<>
 <P>The professor introduced unit testing alongside the BS pricer: "Testing is an important part of software development."</P>
@@ -351,6 +355,9 @@ Verify CI narrows as M increases.`}/>
   {q:"The MC pricer takes `const Option&` as parameter. What is the advantage of this design?",o:["It's faster than passing by value","It works with ANY option type (Call, Put, Barrier, etc.) through polymorphism — without rewriting the pricer","It prevents the option from being modified","All of the above"],a:3,e:"const prevents modification, reference avoids copying, and base class reference enables polymorphism with any derived option type."},
 ]}/>
 </>)},
+
+// Assignment 4 imported from ./assignments
+assignment4,
 
 // ═══════ 5.7 MORE INHERITANCE ═══════
 {title:"Virtual Destructor, Catch by Reference, First-Fit",content:(<>
@@ -575,7 +582,10 @@ Compare European call prices from MC, binomial, and trinomial.`}/>
   "I understand vector capacity vs size, reserve vs resize, push_back growth",
   "I can design PricingEngine hierarchy with independent option and pricer hierarchies",
 ]}/>
-</>)}
+</>)},
+
+// Assignment 5 imported from ./assignments
+assignment5
 ]};
 
 export default module5;
