@@ -259,25 +259,25 @@ export function Quiz({questions,id}){
   </div>);
 }
 
-// ─── Milestone Checklist (Rule 7) ───
-export function Checklist({items,id}){
-  const key=useMemo(()=>`cpp-checklist:${id||items[0]?.slice(0,30)||"default"}`,[id,items]);
-  const[checked,setChecked]=useState(()=>{try{const d=localStorage.getItem(key);return d?JSON.parse(d):{};}catch{return{};}});
-  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(checked));}catch{}},[key,checked]);
-  const done=Object.values(checked).filter(Boolean).length;
-  return(<div style={{margin:"20px 0",background:C.card,borderRadius:12,padding:20,border:`1px solid ${C.bd}`}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-      <span style={{fontWeight:700,color:C.g,fontSize:15}}>✅ Milestone Checklist</span>
-      <span style={{fontSize:12,color:C.td}}>{done}/{items.length} complete</span>
+// ─── Full Code (Collapsible Complete Files) ───
+export function FullCode({title="Complete Runnable Code", files}){
+  const[open,setOpen]=useState(false);
+  const containerRef = useRef(null);
+  useEffect(() => {
+    if (open && containerRef.current && window.Prism && window.Prism.languages.cpp) {
+      window.Prism.highlightAllUnder(containerRef.current);
+    }
+  }, [open]);
+  return(<div style={{margin:"20px 0",background:C.card,borderRadius:12,border:`1px solid ${C.bd}`,overflow:"hidden"}}>
+    <div onClick={()=>setOpen(!open)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 18px",cursor:"pointer",background:"rgba(124,108,240,0.06)"}}>
+      <span style={{fontWeight:700,color:C.accent,fontSize:15}}>📦 {title}</span>
+      <span style={{fontSize:12,color:C.td}}>{files.length} files {open?"▲":"▼"}</span>
     </div>
-    {items.map((it,i)=>(
-      <div key={i} onClick={()=>setChecked(p=>({...p,[i]:!p[i]}))} style={{
-        padding:"8px 12px",marginBottom:4,borderRadius:6,cursor:"pointer",display:"flex",alignItems:"center",gap:10,
-        background:checked[i]?"rgba(46,204,113,0.08)":"rgba(255,255,255,0.02)",
-        border:`1px solid ${checked[i]?C.g:"transparent"}`,fontSize:13.5,color:checked[i]?C.g:C.t
-      }}>
-        <span style={{fontSize:16}}>{checked[i]?"☑":"☐"}</span>{it}
-      </div>
-    ))}
+    {open&&<div ref={containerRef} style={{padding:"0"}}>
+      {files.map((f,i)=>(<div key={i} style={{borderTop:`1px solid ${C.bd}`}}>
+        <div style={{background:"#F7F8FA",padding:"8px 16px",fontSize:12,color:C.td,fontFamily:"'JetBrains Mono','Consolas',monospace"}}>{f.name}</div>
+        <pre style={{background:C.code,padding:"16px 18px",fontSize:13,fontFamily:"'JetBrains Mono','Consolas','Courier New',monospace",overflowX:"auto",margin:0,lineHeight:1.6,whiteSpace:"pre-wrap"}}><code className="language-cpp">{f.code}</code></pre>
+      </div>))}
+    </div>}
   </div>);
 }
