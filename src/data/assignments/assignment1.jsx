@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, FullCode } from "../../components";
 
 const assignment1 = {title:"Assignment 1: Building a Stock Portfolio",content:(<>
 <Hw num={1} title="Stock Portfolio Manager" desc={`Build a complete Stock class following the FINM 326 coding standard.
@@ -225,18 +225,77 @@ Total Portfolio Value: $76416.50`}/>
   {q:"In `for (const auto& stock : portfolio)`, why use `const auto&`?",o:["Required by C++","const prevents modification, & avoids copying each Stock object","It's faster than auto","No reason"],a:1,e:"const auto& gives read-only access without copying. Without &, each Stock would be copied every iteration."}
 ]}/>
 
-<Checklist items={[
-  "Created stock.h with include guard (#ifndef or #pragma once)",
-  "Declared public interface: constructors, destructor, getters, setters",
-  "Declared private data members with trailing underscore convention",
-  "Marked all getters as const (after the parentheses)",
-  "Created stock.cpp with #include \"stock.h\"",
-  "Used member initializer lists in both constructors",
-  "Implemented get_market_value() as computed property (price * quantity)",
-  "Created main.cpp that stores 5 stocks in vector<Stock>",
-  "Used range-based for loop with const auto& to iterate",
-  "Computed and displayed total portfolio value",
-  "Code compiles without warnings using g++ -Wall"
+<FullCode files={[
+{name:"Stock.h",code:`#ifndef STOCK_H
+#define STOCK_H
+
+#include <string>
+
+class Stock {
+public:
+    Stock(std::string symbol, double price, int quantity);
+
+    std::string getTicker() const;
+    double getPrice() const;
+    int getQuantity() const;
+
+    double getMarketValue() const;
+
+private:
+    std::string symbol_;
+    double price_;
+    int quantity_;
+};
+
+#endif // STOCK_H`},
+{name:"Stock.cpp",code:`#include "Stock.h"
+
+Stock::Stock(std::string symbol, double price, int quantity)
+    : symbol_(symbol), price_(price), quantity_(quantity) {
+}
+
+std::string Stock::getTicker() const {
+    return symbol_;
+}
+
+double Stock::getPrice() const {
+    return price_;
+}
+
+int Stock::getQuantity() const {
+    return quantity_;
+}
+
+double Stock::getMarketValue() const {
+    return price_ * quantity_;
+}`},
+{name:"main.cpp",code:`#include <iostream>
+#include <vector>
+#include "Stock.h"
+
+int main() {
+    std::vector<Stock> portfolio;
+
+    portfolio.emplace_back("AAPL", 248.04, 100);
+    portfolio.emplace_back("GOOGL", 327.93, 50);
+    portfolio.emplace_back("MSFT", 465.95, 75);
+    portfolio.emplace_back("AMZN", 239.16, 30);
+    portfolio.emplace_back("NVDA", 187.67, 40);
+
+    double totalValue = 0.0;
+    for (auto it = portfolio.begin(); it != portfolio.end(); ++it) {
+        totalValue += it->getMarketValue();
+    }
+
+    std::cout << "=== Stock Portfolio ===" << std::endl;
+    for (const auto& stock : portfolio) {
+        std::cout << stock.getTicker() << ": $" << stock.getMarketValue() << std::endl;
+    }
+
+    std::cout << "Total: $" << totalValue << std::endl;
+
+    return 0;
+}`}
 ]}/>
 </>)};
 

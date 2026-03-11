@@ -1,4 +1,4 @@
-import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, FullCode } from "../../components";
 
 const assignment3 = {title:"Assignment 3: Option Pricing with Inheritance",content:(<>
 <Hw num={3} title="Black-Scholes Pricer" desc={`Use inheritance to write an OO Black-Scholes Pricer.
@@ -246,20 +246,172 @@ Test cases:
   {q:"The line `return K_ * std::exp(-r * T_) * N(-d2_val)` in EuropeanPut::price uses K_ and T_ directly because:",o:["They're public","They're protected — accessible by derived classes","It's a friend function","C++ allows it"],a:1}
 ]}/>
 
-<Checklist items={[
-  "Created Option abstract base class with pure virtual price()",
-  "Added virtual destructor: virtual ~Option() = default",
-  "Made K_ and T_ protected for derived class access",
-  "Implemented d1(), d2(), N(), Nprime() helpers in base class",
-  "Created EuropeanCall derived class inheriting from Option",
-  "Called base constructor: Option(K, T) in initializer list",
-  "Used override keyword on price() implementation",
-  "Implemented call formula: S·N(d1) - K·e^(-rT)·N(d2)",
-  "Implemented call delta: N(d1)",
-  "Implemented call gamma: N'(d1) / (S·v·√T)",
-  "Created EuropeanPut with put formula: K·e^(-rT)·N(-d2) - S·N(-d1)",
-  "Implemented put delta: N(d1) - 1",
-  "Tested polymorphism: Option& parameter accepts both Call and Put"
+<FullCode files={[
+{name:"Option.h",code:`#ifndef OPTION_H
+#define OPTION_H
+
+class Option {
+public:
+    Option(double K, double T);
+    virtual ~Option() = default;
+
+    virtual double price(double S0, double r, double v) = 0;
+    virtual double delta(double S0, double r, double v) = 0;
+    virtual double gamma(double S0, double r, double v) = 0;
+
+protected:
+    double d1(double S0, double r, double v);
+    double d2(double S0, double r, double v);
+    double normalCDF(double x);
+    double normalPDF(double x);
+
+    double K_;
+    double T_;
+};
+
+#endif`},
+{name:"Option.cpp",code:`#include "Option.h"
+#include <cmath>
+#include <numbers>
+
+Option::Option(double K, double T)
+    : K_(K), T_(T)
+{}
+
+double Option::d1(double S0, double r, double v) {
+    return (std::log(S0 * std::exp(r * T_) / K_)) / (v * std::sqrt(T_))
+           + (v * std::sqrt(T_)) / 2.0;
+}
+
+double Option::d2(double S0, double r, double v) {
+    return (std::log(S0 * std::exp(r * T_) / K_)) / (v * std::sqrt(T_))
+           - (v * std::sqrt(T_)) / 2.0;
+}
+
+double Option::normalCDF(double x) {
+    return 0.5 * (1.0 + std::erf(x / std::sqrt(2.0)));
+}
+
+double Option::normalPDF(double x) {
+    return (1.0 / std::sqrt(2.0 * std::numbers::pi)) * std::exp(-x * x / 2.0);
+}`},
+{name:"EuropeanCall.h",code:`#ifndef EUROPEANCALL_H
+#define EUROPEANCALL_H
+
+#include "Option.h"
+
+class EuropeanCall : public Option {
+public:
+    EuropeanCall(double K, double T);
+    double price(double S0, double r, double v) override;
+    double delta(double S0, double r, double v) override;
+    double gamma(double S0, double r, double v) override;
+};
+
+#endif`},
+{name:"EuropeanCall.cpp",code:`#include "EuropeanCall.h"
+#include <cmath>
+
+EuropeanCall::EuropeanCall(double K, double T)
+    : Option(K, T)
+{}
+
+double EuropeanCall::price(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    double D2 = d2(S0, r, v);
+    return S0 * normalCDF(D1) - K_ * std::exp(-r * T_) * normalCDF(D2);
+}
+
+double EuropeanCall::delta(double S0, double r, double v) {
+    return normalCDF(d1(S0, r, v));
+}
+
+double EuropeanCall::gamma(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    return normalPDF(D1) / (S0 * v * std::sqrt(T_));
+}`},
+{name:"EuropeanPut.h",code:`#ifndef EUROPEANPUT_H
+#define EUROPEANPUT_H
+
+#include "Option.h"
+
+class EuropeanPut : public Option {
+public:
+    EuropeanPut(double K, double T);
+    double price(double S0, double r, double v) override;
+    double delta(double S0, double r, double v) override;
+    double gamma(double S0, double r, double v) override;
+};
+
+#endif`},
+{name:"EuropeanPut.cpp",code:`#include "EuropeanPut.h"
+#include <cmath>
+
+EuropeanPut::EuropeanPut(double K, double T)
+    : Option(K, T)
+{}
+
+double EuropeanPut::price(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    double D2 = d2(S0, r, v);
+    return K_ * std::exp(-r * T_) * normalCDF(-D2) - S0 * normalCDF(-D1);
+}
+
+double EuropeanPut::delta(double S0, double r, double v) {
+    return normalCDF(d1(S0, r, v)) - 1.0;
+}
+
+double EuropeanPut::gamma(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    return normalPDF(D1) / (S0 * v * std::sqrt(T_));
+}`},
+{name:"main.cpp",code:`#include <iostream>
+#include <iomanip>
+#include "EuropeanCall.h"
+#include "EuropeanPut.h"
+
+int main() {
+    std::cout << std::fixed << std::setprecision(6);
+
+    // Call: S0 = 100, K = 100, T = 1, sigma = 0.3, r = 0.05
+    {
+        double S0 = 100.0;
+        double K  = 100.0;
+        double T  = 1.0;
+        double v  = 0.3;
+        double r  = 0.05;
+
+        EuropeanCall call(K, T);
+        std::cout << "European Call Option:" << std::endl;
+        std::cout << "  S0 = " << S0 << ", K = " << K
+                  << ", T = " << T << ", sigma = " << v
+                  << ", r = " << r << std::endl;
+        std::cout << "  Price: " << call.price(S0, r, v) << std::endl;
+        std::cout << "  Delta: " << call.delta(S0, r, v) << std::endl;
+        std::cout << "  Gamma: " << call.gamma(S0, r, v) << std::endl;
+        std::cout << std::endl;
+    }
+
+    // Put: S0 = 120, K = 120, T = 2, sigma = 0.4, r = 0.1
+    {
+        double S0 = 120.0;
+        double K  = 120.0;
+        double T  = 2.0;
+        double v  = 0.4;
+        double r  = 0.1;
+
+        EuropeanPut put(K, T);
+        std::cout << "European Put Option:" << std::endl;
+        std::cout << "  S0 = " << S0 << ", K = " << K
+                  << ", T = " << T << ", sigma = " << v
+                  << ", r = " << r << std::endl;
+        std::cout << "  Price: " << put.price(S0, r, v) << std::endl;
+        std::cout << "  Delta: " << put.delta(S0, r, v) << std::endl;
+        std::cout << "  Gamma: " << put.gamma(S0, r, v) << std::endl;
+    }
+
+    return 0;
+}`}
 ]}/>
 </>)};
 

@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, FullCode } from "../../components";
 
 const assignment2 = {title:"Assignment 2: Portfolio Manager with CSV Data",content:(<>
 <Hw num={2} title="OO Portfolio Manager" desc={`Starting from Assignment 1, build a complete Portfolio Manager:
@@ -285,19 +285,293 @@ cout << s1 << endl << s2 << endl;
   {q:"Consider:\n```cpp\nstd::ifstream infile(\"data.csv\");\nif (!infile) {\n    std::cerr << \"Failed\" << std::endl;\n    return 1;\n}\nstd::string line;\nwhile (std::getline(infile, line)) {\n    // process line\n}\n// Is infile.close() needed here?\n```\nWhat happens when the function returns?",o:["Memory leak — close() was not called","File auto-closes due to RAII — destructor closes it","Undefined behavior","File stays open forever"],a:1,e:"RAII (Resource Acquisition Is Initialization): ifstream's destructor automatically closes the file. No manual close() needed."}
 ]}/>
 
-<Checklist items={[
-  "Created PortfolioMgr class with vector<Stock> member (composition)",
-  "Implemented add_stock, get_stock, total_value, size functions",
-  "Used std::accumulate with lambda to compute total value",
-  "Used 0.0 (not 0) as initial value for double accumulation",
-  "Implemented CSV reading with two-loop getline pattern",
-  "Skipped header row before main parsing loop",
-  "Used stod() to convert string fields to double",
-  "Threw std::runtime_error when symbol not found",
-  "Caught exceptions by const reference",
-  "Overloaded operator<< as friend non-member function",
-  "Used relative paths for CSV files",
-  "All getters marked const"
+<FullCode files={[
+{name:"Stock.h",code:`// Stock.h
+// Assignment 2 - Object-Oriented Portfolio Manager
+
+#ifndef STOCK_H
+#define STOCK_H
+
+#include <string>
+#include <vector>
+
+class Stock {
+public:
+    Stock(std::string symbol, int quantity);
+
+    bool loadFromCSV(const std::string& filepath);
+
+    std::string getTicker() const;
+    double getPrice() const;
+    int getQuantity() const;
+    double getMarketValue() const;
+
+    const std::vector<double>& getClosingPrices() const;
+
+    double predictNextDayReturn(int window = 30) const;
+
+private:
+    std::string symbol_;
+    int quantity_;
+    std::vector<std::string> dates_;
+    std::vector<double> closingPrices_;
+};
+
+#endif // STOCK_H`},
+{name:"Stock.cpp",code:`// Stock.cpp
+// Assignment 2 - Object-Oriented Portfolio Manager
+
+#include "Stock.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <cctype>
+#include <numeric>
+#include <algorithm>
+
+Stock::Stock(std::string symbol, int quantity)
+    : symbol_(std::move(symbol)), quantity_(quantity) {
+}
+
+bool Stock::loadFromCSV(const std::string& filepath) {
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filepath << std::endl;
+        return false;
+    }
+
+    dates_.clear();
+    closingPrices_.clear();
+
+    std::string line;
+    std::getline(file, line);
+
+    int closeCol = -1;
+    bool newFormat = false;
+
+    std::stringstream headerSS(line);
+    std::string col;
+    std::vector<std::string> headers;
+    while (std::getline(headerSS, col, ',')) {
+        headers.push_back(col);
+    }
+
+    if (headers.size() > 0 && headers[0] == "Price") {
+        newFormat = true;
+        for (int i = 0; i < (int)headers.size(); ++i) {
+            if (headers[i] == "Close") { closeCol = i; break; }
+        }
+        std::getline(file, line);
+        std::getline(file, line);
+        if (!line.empty() && std::isdigit(line[0])) {
+            std::stringstream ss(line);
+            std::string date;
+            std::getline(ss, date, ',');
+            std::string val;
+            for (int i = 1; i <= closeCol && std::getline(ss, val, ','); ++i) {}
+            if (!date.empty() && !val.empty()) {
+                try {
+                    dates_.push_back(date);
+                    closingPrices_.push_back(std::stod(val));
+                } catch (...) {}
+            }
+        }
+    } else {
+        for (int i = 0; i < (int)headers.size(); ++i) {
+            if (headers[i] == "Close") { closeCol = i; break; }
+        }
+    }
+
+    if (closeCol < 0) {
+        closeCol = 4;
+    }
+
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+
+        std::stringstream ss(line);
+        std::string token;
+        std::vector<std::string> tokens;
+        while (std::getline(ss, token, ',')) {
+            tokens.push_back(token);
+        }
+
+        if ((int)tokens.size() <= closeCol) continue;
+
+        std::string date = tokens[0];
+        std::string closeStr = tokens[closeCol];
+
+        if (closeStr.empty()) continue;
+        try {
+            double closePrice = std::stod(closeStr);
+            dates_.push_back(date);
+            closingPrices_.push_back(closePrice);
+        } catch (const std::invalid_argument&) {
+            continue;
+        }
+    }
+
+    file.close();
+    return !closingPrices_.empty();
+}
+
+std::string Stock::getTicker() const {
+    return symbol_;
+}
+
+double Stock::getPrice() const {
+    if (closingPrices_.empty()) return 0.0;
+    return closingPrices_.back();
+}
+
+int Stock::getQuantity() const {
+    return quantity_;
+}
+
+double Stock::getMarketValue() const {
+    return getPrice() * quantity_;
+}
+
+const std::vector<double>& Stock::getClosingPrices() const {
+    return closingPrices_;
+}
+
+double Stock::predictNextDayReturn(int window) const {
+    if (closingPrices_.size() < 2) return 0.0;
+
+    std::vector<double> dailyReturns;
+    dailyReturns.resize(closingPrices_.size() - 1);
+
+    std::transform(closingPrices_.begin() + 1, closingPrices_.end(),
+                   closingPrices_.begin(),
+                   dailyReturns.begin(),
+                   [](double curr, double prev) {
+                       return (curr - prev) / prev;
+                   });
+
+    int n = static_cast<int>(dailyReturns.size());
+    int start = std::max(0, n - window);
+    int count = n - start;
+
+    double sumReturns = std::accumulate(
+        dailyReturns.begin() + start,
+        dailyReturns.end(),
+        0.0
+    );
+
+    return sumReturns / count;
+}`},
+{name:"Portfolio.h",code:`// Portfolio.h
+// Assignment 2 - Object-Oriented Portfolio Manager
+
+#ifndef PORTFOLIO_H
+#define PORTFOLIO_H
+
+#include "Stock.h"
+#include <vector>
+#include <string>
+
+class Portfolio {
+public:
+    Portfolio() = default;
+
+    void addStock(const std::string& symbol, int quantity, const std::string& csvPath);
+
+    double getTotalValue() const;
+
+    void printPredictions(int window = 30) const;
+
+    void printSummary() const;
+
+    const std::vector<Stock>& getStocks() const;
+
+private:
+    std::vector<Stock> stocks_;
+};
+
+#endif // PORTFOLIO_H`},
+{name:"Portfolio.cpp",code:`// Portfolio.cpp
+// Assignment 2 - Object-Oriented Portfolio Manager
+
+#include "Portfolio.h"
+#include <iostream>
+#include <iomanip>
+#include <numeric>
+#include <algorithm>
+
+void Portfolio::addStock(const std::string& symbol, int quantity, const std::string& csvPath) {
+    Stock stock(symbol, quantity);
+    if (stock.loadFromCSV(csvPath)) {
+        stocks_.push_back(std::move(stock));
+    } else {
+        std::cerr << "Warning: Failed to load data for " << symbol << std::endl;
+    }
+}
+
+double Portfolio::getTotalValue() const {
+    return std::accumulate(stocks_.begin(), stocks_.end(), 0.0,
+        [](double sum, const Stock& s) {
+            return sum + s.getMarketValue();
+        });
+}
+
+void Portfolio::printSummary() const {
+    std::cout << "=== Stock Portfolio ===" << std::endl;
+    std::cout << std::fixed << std::setprecision(2);
+
+    std::for_each(stocks_.begin(), stocks_.end(), [](const Stock& s) {
+        std::cout << s.getTicker()
+                  << ": Price = $" << s.getPrice()
+                  << ", Qty = " << s.getQuantity()
+                  << ", Value = $" << s.getMarketValue()
+                  << std::endl;
+    });
+
+    std::cout << "Total Portfolio Value: $" << getTotalValue() << std::endl;
+    std::cout << std::endl;
+}
+
+void Portfolio::printPredictions(int window) const {
+    std::cout << "=== Predicted Next-Day Returns (using " << window
+              << "-day SMA of daily returns) ===" << std::endl;
+    std::cout << std::fixed << std::setprecision(4);
+
+    for (const auto& stock : stocks_) {
+        double predicted = stock.predictNextDayReturn(window);
+        std::cout << stock.getTicker()
+                  << ": Predicted return = " << (predicted * 100.0) << "%"
+                  << "  (predicted price: $"
+                  << std::setprecision(2) << stock.getPrice() * (1.0 + predicted) << ")"
+                  << std::setprecision(4)
+                  << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+const std::vector<Stock>& Portfolio::getStocks() const {
+    return stocks_;
+}`},
+{name:"main.cpp",code:`// main.cpp
+// Assignment 2 - Object-Oriented Portfolio Manager
+
+#include <iostream>
+#include "Portfolio.h"
+
+int main() {
+    Portfolio portfolio;
+
+    portfolio.addStock("AAPL",  100, "data/AAPL.csv");
+    portfolio.addStock("GOOGL",  50, "data/GOOGL.csv");
+    portfolio.addStock("MSFT",   75, "data/MSFT.csv");
+    portfolio.addStock("AMZN",   30, "data/AMZN.csv");
+    portfolio.addStock("NVDA",   40, "data/NVDA.csv");
+
+    portfolio.printSummary();
+
+    portfolio.printPredictions(30);
+
+    return 0;
+}`}
 ]}/>
 </>)};
 

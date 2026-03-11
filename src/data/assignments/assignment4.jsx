@@ -1,4 +1,4 @@
-import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, FullCode } from "../../components";
 
 const assignment4 = {title:"Assignment 4: Monte Carlo Pricer",content:(<>
 <Hw num={4} title="Monte Carlo Option Pricer" desc={`Implement a Monte Carlo option pricer using modern C++ random number generation.
@@ -202,20 +202,242 @@ std::mt19937 eng(rd()); // Different
   {q:"The pricer takes `const Option& option`. This enables:",o:["Faster code","Polymorphism — any derived option type (Call, Put, Barrier) can be priced","Read-only access","All of the above"],a:3}
 ]}/>
 
-<Checklist items={[
-  "Set up mt19937 engine with fixed seed for reproducibility",
-  "Created normal_distribution<double>(0.0, 1.0) for N(0,1) samples",
-  "Made engine and distribution mutable for use in const functions",
-  "Implemented GBM simulation: ST = S·exp((r-σ²/2)T + σ√T·z)",
-  "Added get_payoff() virtual function to Option hierarchy",
-  "Implemented Call payoff: max(ST - K, 0)",
-  "Implemented Put payoff: max(K - ST, 0)",
-  "Used polymorphism: price() takes const Option& parameter",
-  "Computed discounted average: e^(-rT) × (sum of payoffs) / M",
-  "Implemented standard error: ε = σ/√M",
-  "Computed 95% CI: [price ± 1.96·ε]",
-  "Tested with M = 10000, 100000, 1000000 paths",
-  "Verified CI narrows as M increases"
+<FullCode files={[
+{name:"Option.h",code:`#ifndef OPTION_H
+#define OPTION_H
+
+class Option {
+public:
+    Option(double K, double T);
+    virtual ~Option() = default;
+
+    virtual double price(double S0, double r, double v) = 0;
+    virtual double delta(double S0, double r, double v) = 0;
+    virtual double gamma(double S0, double r, double v) = 0;
+
+    virtual double get_expiration_payoff(double ST) const = 0;
+
+    double get_T() const;
+
+protected:
+    double d1(double S0, double r, double v);
+    double d2(double S0, double r, double v);
+    double normalCDF(double x);
+    double normalPDF(double x);
+
+    double K_;
+    double T_;
+};
+
+#endif`},
+{name:"Option.cpp",code:`#include "Option.h"
+#include <cmath>
+#include <numbers>
+
+Option::Option(double K, double T)
+    : K_(K), T_(T)
+{}
+
+double Option::get_T() const {
+    return T_;
+}
+
+double Option::d1(double S0, double r, double v) {
+    return (std::log(S0 * std::exp(r * T_) / K_)) / (v * std::sqrt(T_))
+           + (v * std::sqrt(T_)) / 2.0;
+}
+
+double Option::d2(double S0, double r, double v) {
+    return (std::log(S0 * std::exp(r * T_) / K_)) / (v * std::sqrt(T_))
+           - (v * std::sqrt(T_)) / 2.0;
+}
+
+double Option::normalCDF(double x) {
+    return 0.5 * (1.0 + std::erf(x / std::sqrt(2.0)));
+}
+
+double Option::normalPDF(double x) {
+    return (1.0 / std::sqrt(2.0 * std::numbers::pi)) * std::exp(-x * x / 2.0);
+}`},
+{name:"EuropeanCall.h",code:`#ifndef EUROPEANCALL_H
+#define EUROPEANCALL_H
+
+#include "Option.h"
+
+class EuropeanCall : public Option {
+public:
+    EuropeanCall(double K, double T);
+    double price(double S0, double r, double v) override;
+    double delta(double S0, double r, double v) override;
+    double gamma(double S0, double r, double v) override;
+    double get_expiration_payoff(double ST) const override;
+};
+
+#endif`},
+{name:"EuropeanCall.cpp",code:`#include "EuropeanCall.h"
+#include <cmath>
+#include <algorithm>
+
+EuropeanCall::EuropeanCall(double K, double T)
+    : Option(K, T)
+{}
+
+double EuropeanCall::price(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    double D2 = d2(S0, r, v);
+    return S0 * normalCDF(D1) - K_ * std::exp(-r * T_) * normalCDF(D2);
+}
+
+double EuropeanCall::delta(double S0, double r, double v) {
+    return normalCDF(d1(S0, r, v));
+}
+
+double EuropeanCall::gamma(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    return normalPDF(D1) / (S0 * v * std::sqrt(T_));
+}
+
+double EuropeanCall::get_expiration_payoff(double ST) const {
+    return std::max(ST - K_, 0.0);
+}`},
+{name:"EuropeanPut.h",code:`#ifndef EUROPEANPUT_H
+#define EUROPEANPUT_H
+
+#include "Option.h"
+
+class EuropeanPut : public Option {
+public:
+    EuropeanPut(double K, double T);
+    double price(double S0, double r, double v) override;
+    double delta(double S0, double r, double v) override;
+    double gamma(double S0, double r, double v) override;
+    double get_expiration_payoff(double ST) const override;
+};
+
+#endif`},
+{name:"EuropeanPut.cpp",code:`#include "EuropeanPut.h"
+#include <cmath>
+#include <algorithm>
+
+EuropeanPut::EuropeanPut(double K, double T)
+    : Option(K, T)
+{}
+
+double EuropeanPut::price(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    double D2 = d2(S0, r, v);
+    return K_ * std::exp(-r * T_) * normalCDF(-D2) - S0 * normalCDF(-D1);
+}
+
+double EuropeanPut::delta(double S0, double r, double v) {
+    return normalCDF(d1(S0, r, v)) - 1.0;
+}
+
+double EuropeanPut::gamma(double S0, double r, double v) {
+    double D1 = d1(S0, r, v);
+    return normalPDF(D1) / (S0 * v * std::sqrt(T_));
+}
+
+double EuropeanPut::get_expiration_payoff(double ST) const {
+    return std::max(K_ - ST, 0.0);
+}`},
+{name:"MCPricer.h",code:`#ifndef MCPRICER_H
+#define MCPRICER_H
+
+#include "Option.h"
+#include <random>
+
+class MCPricer {
+public:
+    MCPricer();
+
+    double price(const Option& option,
+                 double stockPrice, double vol, double rate,
+                 unsigned long paths);
+
+private:
+    double boxMuller();
+
+    std::mt19937 eng_;
+    std::uniform_real_distribution<double> udist_;
+};
+
+#endif`},
+{name:"MCPricer.cpp",code:`#include "MCPricer.h"
+#include <cmath>
+#include <numbers>
+
+MCPricer::MCPricer()
+    : eng_(std::random_device{}()),
+      udist_(0.0, 1.0)
+{}
+
+double MCPricer::boxMuller() {
+    double u1 = udist_(eng_);
+    double u2 = udist_(eng_);
+    return std::sqrt(-2.0 * std::log(u1)) * std::cos(2.0 * std::numbers::pi * u2);
+}
+
+double MCPricer::price(const Option& option,
+                       double stockPrice, double vol, double rate,
+                       unsigned long paths) {
+    double T = option.get_T();
+    double sumPayoffs = 0.0;
+
+    double drift = (rate - vol * vol / 2.0) * T;
+    double diffusion = vol * std::sqrt(T);
+    double discount = std::exp(-rate * T);
+
+    for (unsigned long i = 0; i < paths; ++i) {
+        double z = boxMuller();
+        double ST = stockPrice * std::exp(drift + diffusion * z);
+        double payoff = option.get_expiration_payoff(ST);
+        sumPayoffs += payoff;
+    }
+
+    return discount * (sumPayoffs / static_cast<double>(paths));
+}`},
+{name:"main.cpp",code:`#include <iostream>
+#include <iomanip>
+#include "EuropeanCall.h"
+#include "EuropeanPut.h"
+#include "MCPricer.h"
+
+int main() {
+    double S0 = 100.0;
+    double sigma = 0.3;
+    double r = 0.01;
+    double T = 2.0;
+    double K = 100.0;
+
+    unsigned long paths[] = {10000, 100000, 1000000};
+
+    EuropeanCall call(K, T);
+    EuropeanPut put(K, T);
+
+    double bsCallPrice = call.price(S0, r, sigma);
+    double bsPutPrice = put.price(S0, r, sigma);
+
+    std::cout << std::fixed << std::setprecision(6);
+
+    std::cout << "BS Call Price: " << bsCallPrice << std::endl;
+    std::cout << "BS Put  Price: " << bsPutPrice << std::endl;
+    std::cout << std::endl;
+
+    for (auto M : paths) {
+        MCPricer mcCall;
+        MCPricer mcPut;
+
+        double mcCallPrice = mcCall.price(call, S0, sigma, r, M);
+        double mcPutPrice = mcPut.price(put, S0, sigma, r, M);
+
+        std::cout << "Paths = " << M
+                  << "  Call: " << mcCallPrice
+                  << "  Put: " << mcPutPrice << std::endl;
+    }
+
+    return 0;
+}`}
 ]}/>
 </>)};
 
