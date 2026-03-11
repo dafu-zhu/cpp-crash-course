@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
 import { assignment2 } from "./assignments";
 
 const module4 = {id:4,title:"I/O, Algorithms, Errors",sub:"Lec 4 · File I/O, STL Algorithms, Exceptions, Operators",icon:"📦",color:C.o,sections:[
@@ -268,21 +268,6 @@ Due: February 11`} practice={`Build a GradeBook application:
   {q:"What does 'mutable' allow?",o:["Makes a variable const","Allows modification of a member even inside a const member function","Prevents modification","Creates a copy"],a:1},
   {q:"Consider:\n```cpp\nclass Stock {\npublic:\n    double get_price() { return price_; }\nprivate:\n    double price_;\n};\n\nconst Stock s(\"MSFT\", 500, 1);\ncout << s.get_price();\n```\nWhat happens?",o:["Prints 500","Compile error — get_price() is not marked const","Runtime error","Prints 0"],a:1,e:"s is const, but get_price() doesn't promise not to modify the object. Fix: double get_price() const;"},
   {q:"Which of the following is the correct signature for operator<< overloading?\n\nA. `ostream& operator<<(ostream& os, const Stock& s)`\nB. `void Stock::operator<<(ostream& os)`\nC. `ostream& Stock::operator<<(const Stock& s)`\nD. `void operator<<(const Stock& s)`",o:["A — non-member, returns ostream& for chaining","B — member function returning void","C — member function","D — non-member returning void"],a:0,e:"operator<< must be a non-member so that cout comes first (cout << s). It returns ostream& for chaining (cout << s1 << s2)."},
-]}/>
-
-<Checklist items={[
-  "I can use ofstream/ifstream for file I/O (and know files use RAII)",
-  "I know cerr (unbuffered errors) vs clog (buffered logs) vs cout (output)",
-  "I can parse CSV files with the two-loop getline pattern",
-  "I know stod() converts string to double",
-  "I can use STL algorithms: accumulate, find, count, sort",
-  "I know accumulate's initial value matters (0 vs 0.0)",
-  "I can throw runtime_error and catch by const reference",
-  "I know e.what() returns the error message",
-  "I mark getter functions const (after the parentheses)",
-  "I understand mutable: exception to the const rule",
-  "I can overload operator<< as a friend non-member function",
-  "I know Scott Meyers' advice: use friend sparingly",
 ]}/>
 </>)},
 

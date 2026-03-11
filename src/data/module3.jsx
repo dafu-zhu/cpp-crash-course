@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
 
 const module3 = {id:3,title:"Memory Management",sub:"Lec 3 · Special Members, Pointers, Smart Pointers, RAII",icon:"🔗",color:C.r,sections:[
 
@@ -361,24 +361,6 @@ Since destructors run automatically when objects go out of scope, resources are 
   {q:"Why use make_shared instead of `new`?",o:["make_shared is faster and exception-safe (single allocation)","There is no difference","make_shared is required by the compiler","new doesn't work with shared_ptr"],a:0},
   {q:"Consider:\n```cpp\nauto s1 = make_shared<Stock>(\"MSFT\", 500, 1);\nauto s2 = s1;\nauto s3 = s1;\ns2.reset();\n```\nAfter this code, is the Stock object still alive?",o:["No — s2 was reset so the object is deleted","Yes — s1 and s3 still point to it (ref count = 2)","Undefined behavior","Compile error"],a:1,e:"s2.reset() decrements the reference count from 3 to 2. The object is only deleted when the count reaches 0."},
   {q:"Based on our class discussions, which of the following are examples of RAII?\n\nA. Using shared_ptr to manage heap memory\nB. Using ifstream to manage file handles\nC. Manually calling delete in the destructor\nD. Using the `new` keyword",o:["A, B, C, D","A, B only","A, B, C","C, D"],a:1,e:"RAII means acquiring resources in the constructor and releasing in the destructor automatically. shared_ptr and ifstream do this. Manual delete and new are what RAII replaces."},
-]}/>
-
-<Checklist items={[
-  "I understand why push_back creates extra copies",
-  "I can write a copy constructor with const reference parameter",
-  "I know how to access private members inside special member functions",
-  "I understand the this pointer and *this",
-  "I can write assignment operator with: self-check, return *this, Stock& return type",
-  "I understand move semantics: rvalue references (&&), std::move, steal vs copy",
-  "I know std::move is a cast, not an actual move operation",
-  "I know move = copy for fundamental types (int, double)",
-  "I can use = default and = delete to control compiler-generated members",
-  "I understand static members (one copy shared by all objects)",
-  "I know automatic (stack) vs free-store (heap) object lifetimes",
-  "I can use new/delete and understand memory leaks",
-  "I use shared_ptr (make_shared) instead of raw pointers",
-  "I can explain RAII: acquire in constructor, release in destructor",
-  "I know shared_ptr vs unique_ptr vs weak_ptr",
 ]}/>
 </>)}
 ]};

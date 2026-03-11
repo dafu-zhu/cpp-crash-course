@@ -1,4 +1,4 @@
-import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
 import { assignment3, assignment4, assignment5 } from "./assignments";
 
 const module5 = {id:5,title:"Inheritance & Pricing",sub:"Lec 5-7 · Inheritance, Polymorphism, BS, MC, Binomial Tree",icon:"🧬",color:"#7c6cf0",sections:[
@@ -568,26 +568,6 @@ Track A — Extensible Pricer: PricingEngine hierarchy. Support MC + Tree.
 Track B — Linear Regression with Eigen library.
 Due: March 7`} practice={`Track A: Add trinomial tree (up/flat/down with p=1/6, 2/3, 1/6).
 Compare European call prices from MC, binomial, and trinomial.`}/>
-
-<Checklist items={[
-  "I can write base classes with public/protected/private",
-  "I understand inheritance: derived IS-A base, inherits all members",
-  "Derived constructors call base constructor in initializer list",
-  "I know virtual (may override) vs pure virtual (= 0, must override) vs non-virtual (don't override)",
-  "I use override keyword on all overriding functions",
-  "I always add virtual destructor to base classes",
-  "I can explain abstract class: has ≥1 pure virtual, cannot instantiate",
-  "I know all BS formulas: price (call/put), d1, d2, N(x) via erf, delta, gamma, N'(x)",
-  "I can use <cmath>: sqrt, exp, log, erf",
-  "I understand polymorphism: base pointer/reference → correct derived function at runtime",
-  "I can write MC pricer: GBM simulation, mt19937 + normal_distribution, payoff via polymorphism",
-  "I know standard error ε = ω/√M and 95% CI formula",
-  "I understand exception hierarchy, catch by const ref (avoid slicing), first-fit rule",
-  "I can implement binomial tree: Node struct, vector<vector<Node>>, 4-step algorithm",
-  "I know European vs American intermediate payoff difference",
-  "I understand vector capacity vs size, reserve vs resize, push_back growth",
-  "I can design PricingEngine hierarchy with independent option and pricer hierarchies",
-]}/>
 </>)},
 
 // Assignment 5 imported from ./assignments

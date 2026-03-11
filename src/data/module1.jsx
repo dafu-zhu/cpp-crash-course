@@ -1,4 +1,4 @@
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
 
 const module1 = {
 id:1, title:"C++ Foundations", sub:"Lec 1 · Your First Program, Types, Functions, References, Pointers", icon:"⚡", color:C.g,
@@ -32,11 +32,6 @@ Can you add new features without rewriting everything? We'll see this powerfully
 </Step>
 
 <Exam>If asked "What is high quality code?" on the exam, list all five metrics with brief explanations. The professor defined these on Slide 5 of Lecture 1 and referenced them in nearly every subsequent lecture.</Exam>
-
-<Checklist items={[
-  "I can list all 5 quality metrics from memory",
-  "I can explain which C++ feature supports which metric",
-]}/>
 </>)},
 
 // ═══════ 1.2 HELLO WORLD ═══════
@@ -234,15 +229,6 @@ double CallPrice(StockPrice s,
   {q:"What does const do when applied to a variable?",o:["Makes it global","Prevents the variable from being modified after initialization","Makes it faster","Converts it to a string"],a:1},
 ]}/>
 
-<Checklist items={[
-  "I know the difference between int, double, float, bool, char, string",
-  "I always use double (not float) for financial calculations",
-  "I understand why 0.1 can't be stored exactly in binary",
-  "I can use const to prevent modification",
-  "I can use static_cast to force floating-point division",
-  "I know the difference between prefix (++x) and postfix (x++)",
-  "I can use type aliases (using) to make code readable",
-]}/>
 </>)},
 
 // ═══════ 1.4 FUNCTIONS ═══════
@@ -537,15 +523,6 @@ Test all three with user input from cin. For swap, print values before and after
   {q:"What happens if you dereference a pointer that was never initialized?\n```cpp\nint* p;\ncout << *p;\n```",o:["Prints 0","Prints a random value","Undefined behavior — may crash or corrupt data","Compile error"],a:2,e:"Uninitialized pointers hold garbage addresses. Dereferencing is undefined behavior. Always initialize to nullptr."},
 ]}/>
 
-<Checklist items={[
-  "I can declare and use pointers with * and &",
-  "I understand dereference (*px) vs address-of (&x)",
-  "I always initialize pointers to nullptr if unused",
-  "I know all 4 cases of const with pointers (left/right of *)",
-  "I can write a swap function using references",
-  "I understand array indexing starts at 0",
-  "I know arrays are fixed-size and vectors are preferred",
-]}/>
 </>)},
 
 ]};

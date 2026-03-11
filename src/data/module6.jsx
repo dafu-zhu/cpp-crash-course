@@ -1,4 +1,4 @@
-import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "../components";
+import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
 
 const module6 = {id:6,title:"AI, RL & Trading",sub:"Lec 8-9 · Eigen, Reinforcement Learning, FIX, Containers, VaR",icon:"🤖",color:C.y,sections:[
 
@@ -350,44 +350,6 @@ Each FIX concept is modeled as a class.
   {label:"Memory & I/O",items:["Smart pointers","RAII","File I/O, Exceptions"],color:C.o},
   {label:"Inheritance",items:["virtual / abstract","Polymorphism","Option hierarchy"],color:C.accent},
   {label:"Applications",items:["BS / MC / Tree","Regression / RL","Trading / VaR"],color:C.y},
-]}/>
-
-<Checklist items={[
-  "I can list all 5 quality metrics",
-  "I know all fundamental types and when to use double vs int",
-  "I understand references (alias, const ref for performance)",
-  "I know pointers: *, &, nullptr, and all 4 const cases",
-  "I can write a complete class with coding standard",
-  "I use member initializer lists in constructors",
-  "I understand public/private/protected",
-  "I can explain encapsulation and data abstraction",
-  "I know struct vs class (default access only)",
-  "I can write include guards (#ifndef and #pragma once)",
-  "I understand function and class templates",
-  "I can use vector, map, pair, and iterators",
-  "I know all 6 special member functions (construct, destruct, copy, assign, move construct, move assign)",
-  "I understand this pointer, *this, return *this for chaining",
-  "I know move semantics: rvalue ref, std::move = cast not move",
-  "I can use shared_ptr (make_shared) and explain RAII",
-  "I can read CSV files with getline + istringstream + delimiter",
-  "I know STL algorithms: accumulate, find, count, sort",
-  "I can throw/try/catch exceptions by const reference",
-  "I understand const member functions and mutable",
-  "I can overload operator<< as a friend non-member",
-  "I understand inheritance: base/derived, IS-A, protected members",
-  "I know virtual vs pure virtual vs non-virtual",
-  "I always use override keyword and virtual destructor",
-  "I can explain abstract classes (≥1 pure virtual, cannot instantiate)",
-  "I understand polymorphism: base ptr/ref → correct derived function",
-  "I know BS formulas: price, d1, d2, N(x), delta, gamma",
-  "I can implement MC pricer with GBM and mt19937",
-  "I know binomial tree: Node, vector<vector<Node>>, 4 steps, European vs American",
-  "I understand vector capacity vs size, reserve vs resize",
-  "I can design PricingEngine hierarchy",
-  "I know Eigen basics: MatrixXd, VectorXd, Map, colPivHouseholderQr",
-  "I understand Q-table RL: episodes, backward update, exploration",
-  "I know container tradeoffs: array vs vector vs list vs map",
-  "I recognize OOP patterns in FIX/trading: inheritance, polymorphism, namespaces",
 ]}/>
 </>)}
 ]};
