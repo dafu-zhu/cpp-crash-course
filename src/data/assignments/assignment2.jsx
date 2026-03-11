@@ -204,13 +204,21 @@ load_from_csv(mgr, "data/MSFT.csv", "MSFT");{"\n"}
 <P>When get_stock throws because a symbol isn't found, the caller must catch the exception.</P>
 </Step>
 
-<AnnotatedCode title="main.cpp — using the portfolio with exceptions" lines={[
+<AnnotatedCode title="main.cpp — complete example with data loading" lines={[
   {code:'#include "portfolio_mgr.h"',why:""},
+  {code:'#include "csv_reader.h"',why:"For load_from_csv function."},
   {code:"#include <iostream>",why:""},
   {code:"",why:""},
   {code:"int main() {",why:""},
-  {code:"    PortfolioMgr mgr;",why:""},
-  {code:"    // ... load data ...",why:""},
+  {code:"    PortfolioMgr mgr;",why:"Create empty portfolio."},
+  {code:"",why:""},
+  {code:"    // Load stocks from CSV files",why:""},
+  {code:'    load_from_csv(mgr, "data/AAPL.csv", "AAPL");',why:"Symbol passed separately — not in CSV!"},
+  {code:'    load_from_csv(mgr, "data/MSFT.csv", "MSFT");',why:"Each stock has its own CSV file."},
+  {code:'    load_from_csv(mgr, "data/GOOGL.csv", "GOOGL");',why:""},
+  {code:"",why:""},
+  {code:'    std::cout << "Portfolio value: $"',why:""},
+  {code:"              << mgr.total_value() << std::endl;",why:"Uses accumulate internally."},
   {code:"",why:""},
   {code:"    try {",why:"Wrap code that might throw."},
   {code:'        const Stock& stock = mgr.get_stock("XYZ");',why:"Might throw if XYZ not in portfolio."},
