@@ -34,7 +34,7 @@ export default function App(){
     const m=MODULES.find(x=>x.id===mod);
     const s=m.sections[sec];
     const k=`${m.id}-${sec}`;
-    return(<div style={{height:"100vh",display:"flex",flexDirection:"column",background:C.bg,color:C.t}}>
+    return(<div style={{height:"100vh",display:"flex",flexDirection:"column",background:C.bg,color:C.t,overflow:"hidden"}}>
       <div style={{background:C.card,borderBottom:`1px solid ${C.bd}`,padding:"12px 22px",display:"flex",alignItems:"center",gap:14,flexShrink:0}}>
         <button onClick={()=>{setMod(null);setSec(0)}} style={{background:C.bd,border:"none",color:C.t,padding:"7px 16px",borderRadius:8,cursor:"pointer",fontSize:13}}>← Back</button>
         <span style={{fontSize:22}}>{m.icon}</span>
