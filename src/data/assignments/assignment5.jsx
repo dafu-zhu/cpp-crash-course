@@ -77,7 +77,7 @@ Test MC: S₀=100, σ=0.3, r=0.01, T=2, K=100, M=10000 paths`}/>
 <P>The binomial tree pricer builds a price tree and back-propagates option values.</P>
 
 <Step n={3} title="Jarrow-Rudd binomial tree">
-<M block>{"S_{\\text{up}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t + \\sigma\\sqrt{\\Delta t}}, \\quad S_{\\text{down}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t - \\sigma\\sqrt{\\Delta t}}"}</M>
+<P><M>{"S_{\\text{up}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t + \\sigma\\sqrt{\\Delta t}}"}</M>, <M>{"S_{\\text{down}} = S \\cdot e^{(r-\\sigma^2/2)\\Delta t - \\sigma\\sqrt{\\Delta t}}"}</M></P>
 </Step>
 
 <AnnotatedCode title="jr_tree_pricer.cpp — key algorithm" lines={[

@@ -154,14 +154,21 @@ You CANNOT create objects of an abstract class. You can only create objects of c
 ]}/>
 
 <H>The Formulas</H>
-<M block>{"V_{\\text{call}} = S_0 \\cdot N(d_1) - K \\cdot e^{-rT} \\cdot N(d_2)"}</M>
-<M block>{"V_{\\text{put}} = K \\cdot e^{-rT} \\cdot N(-d_2) - S_0 \\cdot N(-d_1)"}</M>
-<M block>{"d_1 = \\frac{\\ln(S_0 / K) + (r + \\sigma^2/2)T}{\\sigma\\sqrt{T}}, \\quad d_2 = d_1 - \\sigma\\sqrt{T}"}</M>
-<M block>{"N(x) = \\frac{1}{2}\\left[1 + \\text{erf}\\left(\\frac{x}{\\sqrt{2}}\\right)\\right]"}</M>
+<P>Call price: <M>{"V_{\\text{call}} = S_0 \\cdot N(d_1) - K \\cdot e^{-rT} \\cdot N(d_2)"}</M></P>
+<P>Put price: <M>{"V_{\\text{put}} = K \\cdot e^{-rT} \\cdot N(-d_2) - S_0 \\cdot N(-d_1)"}</M></P>
+<P>Where: <M>{"d_1 = \\frac{\\ln(S_0/K) + (r + \\sigma^2/2)T}{\\sigma\\sqrt{T}}"}</M>, and <M>{"d_2 = d_1 - \\sigma\\sqrt{T}"}</M></P>
+<P><M>{"N(x)"}</M> = CDF of standard normal = <M>{"\\frac{1}{2}[1 + \\text{erf}(x/\\sqrt{2})]"}</M></P>
+
+<Tip title="What is erf()?">
+The <B>error function</B> erf(x) is a special mathematical function used to compute the normal CDF.{"\n"}
+In C++, use <code style={{background:"rgba(0,0,0,0.05)",padding:"2px 6px",borderRadius:4}}>std::erf(x)</code> from &lt;cmath&gt;.{"\n"}
+Formula: <M>{"\\text{erf}(x) = \\frac{2}{\\sqrt{\\pi}} \\int_0^x e^{-t^2} dt"}</M>{"\n"}
+You don't need to implement this — the standard library provides it!
+</Tip>
 
 <H>The Greeks (Risk Sensitivities)</H>
 <P>Call Delta: <M>{"N(d_1)"}</M>. Put Delta: <M>{"N(d_1) - 1"}</M>.</P>
-<P>Gamma (same for call and put): <M>{"\\Gamma = \\frac{N'(d_1)}{S \\cdot \\sigma \\cdot \\sqrt{T}}"}</M>, where <M>{"N'(x) = \\frac{1}{\\sqrt{2\\pi}} e^{-x^2/2}"}</M></P>
+<P>Gamma: <M>{"\\Gamma = N'(d_1) / (S \\cdot \\sigma \\cdot \\sqrt{T})"}</M>, where <M>{"N'(x) = \\frac{1}{\\sqrt{2\\pi}} e^{-x^2/2}"}</M></P>
 
 <H>Math Functions from &lt;cmath&gt;</H>
 <P>sqrt(), exp(), log() (natural log), erf() (error function). C++20 also provides std::numbers::pi.</P>
@@ -305,8 +312,7 @@ assignment3,
 ]}/>
 
 <H>Stock Price Simulation (GBM)</H>
-<P>Under the risk-neutral measure, stock price at time T is:</P>
-<M block>{"S_T = S_0 \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})T + \\sigma\\sqrt{T} \\cdot z\\right), \\quad z \\sim N(0,1)"}</M>
+<P>Under the risk-neutral measure, stock price at time T is: <M>{"S_T = S_0 \\cdot e^{(r - \\sigma^2/2)T + \\sigma\\sqrt{T} \\cdot z}"}</M>, where <M>{"z \\sim N(0,1)"}</M></P>
 
 <H>The MC Algorithm</H>
 <AnnotatedCode title="MC pricing loop" lines={[
@@ -333,11 +339,9 @@ assignment3,
 ]}/>
 
 <H>Standard Error and Confidence Interval</H>
-<P>Standard error (where <M>{"\\omega"}</M> = sample std dev of discounted payoffs):</P>
-<M block>{"\\varepsilon = \\frac{\\omega}{\\sqrt{M}}"}</M>
-<P>95% confidence interval:</P>
-<M block>{"\\left[\\hat{C} - 1.96 \\cdot \\frac{\\omega}{\\sqrt{M}}, \\quad \\hat{C} + 1.96 \\cdot \\frac{\\omega}{\\sqrt{M}}\\right]"}</M>
-<P>To halve the error, you need 4× more paths.</P>
+<P>Standard error: <M>{"\\varepsilon = \\omega / \\sqrt{M}"}</M> (where <M>{"\\omega"}</M> = sample std dev of discounted payoffs)</P>
+<P>95% confidence interval: <M>{"[\\hat{C} - 1.96 \\cdot \\varepsilon, \\; \\hat{C} + 1.96 \\cdot \\varepsilon]"}</M></P>
+<P>To halve the error, you need 4× more paths (since <M>{"\\varepsilon \\propto 1/\\sqrt{M}"}</M>).</P>
 
 <Hw num={4} title="Monte Carlo Pricer (6%)" desc={`Complete MC option pricer.
 • Use Box-Muller method for random number generation
@@ -414,8 +418,8 @@ If you catch by VALUE (not reference), the derived part is <B>sliced off</B> —
 
 <H>Jarrow-Rudd Model</H>
 <P>At each step, stock goes up or down with equal probability (<M>{"p_{\\text{up}} = p_{\\text{down}} = 0.5"}</M>):</P>
-<M block>{"S_{\\text{up}} = S \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})\\Delta t + \\sigma\\sqrt{\\Delta t}\\right)"}</M>
-<M block>{"S_{\\text{down}} = S \\cdot \\exp\\left((r - \\frac{\\sigma^2}{2})\\Delta t - \\sigma\\sqrt{\\Delta t}\\right)"}</M>
+<P><M>{"S_{\\text{up}} = S \\cdot e^{(r - \\sigma^2/2)\\Delta t + \\sigma\\sqrt{\\Delta t}}"}</M></P>
+<P><M>{"S_{\\text{down}} = S \\cdot e^{(r - \\sigma^2/2)\\Delta t - \\sigma\\sqrt{\\Delta t}}"}</M></P>
 <P>The tree <B>recombines</B>: up-then-down = down-then-up → same node. This keeps the tree manageable.</P>
 
 <H>Data Structure — Professor's Exact Design</H>

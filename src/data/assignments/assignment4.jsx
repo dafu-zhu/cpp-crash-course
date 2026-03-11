@@ -107,8 +107,7 @@ Test parameters:
 
 <H>Part 3: Confidence Interval</H>
 <Step n={3} title="Compute standard error and 95% CI">
-<P>Standard error (<M>{"\\sigma"}</M> = sample std dev of discounted payoffs):</P>
-<M block>{"\\varepsilon = \\frac{\\sigma}{\\sqrt{M}}"}</M>
+<P>Standard error: <M>{"\\varepsilon = \\sigma / \\sqrt{M}"}</M> (<M>{"\\sigma"}</M> = sample std dev of discounted payoffs)</P>
 <P>95% CI: <M>{"[\\hat{C} - 1.96\\varepsilon, \\; \\hat{C} + 1.96\\varepsilon]"}</M></P>
 </Step>
 

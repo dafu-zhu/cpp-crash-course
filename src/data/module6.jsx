@@ -168,7 +168,7 @@ Initially all zeros (agent knows nothing). Through repeated episodes, the table 
 
 <H>Extensions</H>
 <Step n={4} title="Discount factor (γ): future rewards worth less">
-<M block>{"G_t = R_{t+1} + \\gamma \\cdot R_{t+2} + \\gamma^2 \\cdot R_{t+3} + \\cdots"}</M>
+<P>Return: <M>{"G_t = R_{t+1} + \\gamma R_{t+2} + \\gamma^2 R_{t+3} + \\cdots"}</M></P>
 <P>Multiply reward by <M>{"\\gamma^k"}</M> at each backward step (k = steps until end). Encourages shorter paths.</P>
 </Step>
 
