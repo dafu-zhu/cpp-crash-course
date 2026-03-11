@@ -157,7 +157,9 @@ int main() {
   {code:"#include <sstream>",why:"For istringstream."},
   {code:"#include <string>",why:""},
   {code:"",why:""},
-  {code:"void load_from_csv(PortfolioMgr& mgr, const std::string& filename) {",why:"Takes reference to modify the existing PortfolioMgr."},
+  {code:"void load_from_csv(PortfolioMgr& mgr,",why:"Takes reference to modify the existing PortfolioMgr."},
+  {code:"                   const std::string& filename,",why:"e.g., \"data/AAPL.csv\""},
+  {code:"                   const std::string& symbol) {",why:"Symbol from filename — CSV doesn't include it!"},
   {code:"    std::ifstream infile(filename);",why:"Open file. RAII: closes automatically when infile goes out of scope."},
   {code:"    if (!infile) {",why:"Check if open failed. ! tests stream's error state."},
   {code:'        throw std::runtime_error("Cannot open file: " + filename);',why:"Throw exception — caller must handle."},
@@ -175,16 +177,25 @@ int main() {
   {code:"            fields.push_back(field);",why:"Store each field."},
   {code:"        }",why:""},
   {code:"",why:""},
-  {code:"        // CSV: Date,Open,High,Low,Close,Volume,Symbol",why:""},
+  {code:"        // CSV: Date[0],Open[1],High[2],Low[3],Close[4],AdjClose[5],Volume[6]",why:"Yahoo Finance format — 7 columns, NO symbol."},
   {code:"        if (fields.size() >= 7) {",why:"Validate we have all columns."},
-  {code:"            std::string symbol = fields[6];",why:"Symbol is 7th column (index 6)."},
-  {code:"            double price = std::stod(fields[4]);",why:"Close price is 5th column. stod converts string to double."},
+  {code:"            double price = std::stod(fields[4]);",why:"Close price is index 4 (5th column)."},
   {code:"            int qty = 100;",why:"Default quantity (or read from another source)."},
-  {code:"            mgr.add_stock(Stock(symbol, price, qty));",why:"Create Stock and add to portfolio."},
+  {code:"            mgr.add_stock(Stock(symbol, price, qty));",why:"Use symbol passed as parameter."},
+  {code:"            break;",why:"Read only latest price (first data row). Remove break to read all rows."},
   {code:"        }",why:""},
   {code:"    }",why:""},
   {code:"}",why:"File auto-closes here (RAII destructor)."}
 ]}/>
+
+<Tip title="Why Symbol is a Parameter">
+Yahoo Finance CSV files don't include a Symbol column — each stock has its own file (AAPL.csv, MSFT.csv).{"\n"}
+Extract symbol from filename or pass it explicitly:{"\n"}
+```cpp{"\n"}
+load_from_csv(mgr, "data/AAPL.csv", "AAPL");{"\n"}
+load_from_csv(mgr, "data/MSFT.csv", "MSFT");{"\n"}
+```
+</Tip>
 
 <Confusion mistake="Forgetting to skip the header row" why={`CSV files typically have column names in the first line (Date,Open,High,...). If you try to parse this as data, stod("Date") throws an exception. Call getline once before the loop to discard the header.`}/>
 
