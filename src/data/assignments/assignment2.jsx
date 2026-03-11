@@ -197,7 +197,7 @@ load_from_csv(mgr, "data/MSFT.csv", "MSFT");{"\n"}
 ```
 </Tip>
 
-<Confusion mistake="Forgetting to skip the header row" why={`CSV files typically have column names in the first line (Date,Open,High,...). If you try to parse this as data, stod("Date") throws an exception. Call getline once before the loop to discard the header.`}/>
+<Confusion mistake="Forgetting to skip the header row" why={`Yahoo Finance CSVs have column names in the first line: Date,Open,High,Low,Close,Adj Close,Volume. If you try to parse this as data, stod("Date") throws an exception! Call getline once BEFORE the while loop to discard the header.`}/>
 
 <H>Part 3: Exception Handling</H>
 <Step n={3} title="Catch and handle exceptions">
