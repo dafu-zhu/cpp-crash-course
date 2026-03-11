@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz, Checklist } from "./components";
+import { C, P, H, B, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "./components";
 import module1 from "./data/module1";
 import module2 from "./data/module2";
 import module3 from "./data/module3";

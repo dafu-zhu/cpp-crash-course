@@ -26,12 +26,20 @@ Add complete, runnable code sections to each assignment in the C++ Crash Course.
 - Prism syntax highlighting for C++
 - Styled to match existing `Code` component
 
-### 2. Assignment File Changes
+### 2. Remove Checklist Component Entirely
+
+**Delete from codebase:**
+- Remove `Checklist` function from `src/components.jsx`
+- Remove `Checklist` from exports in `src/components.jsx`
+- Remove all `<Checklist>` usages from:
+  - `src/data/assignments/assignment1-5.jsx`
+  - `src/data/module1-6.jsx`
+- Remove `Checklist` import from `src/App.jsx` if present
+
+### 3. Add FullCode to Assignments
 
 For each assignment in `src/data/assignments/`:
-
-1. **Remove** `<Checklist>` component
-2. **Add** `<FullCode>` section at the end (after `<Quiz>`)
+- **Add** `<FullCode>` section at the end (after `<Quiz>`)
 
 ### 3. Files to Embed Per Assignment
 
