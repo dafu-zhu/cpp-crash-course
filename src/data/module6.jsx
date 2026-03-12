@@ -1,4 +1,5 @@
 import { C, P, H, B, M, Code, AnnotatedCode, Step, Flowchart, MemDiagram, Hierarchy, Prof, Exam, Tip, Confusion, Conversion, Hw, Quiz } from "../components";
+import finalExamWrongAnswers from "./finalExamWrongAnswers";
 
 const module6 = {id:6,title:"AI, RL & Trading",sub:"Lec 8-9 · Eigen, Reinforcement Learning, FIX, Containers, VaR",icon:"🤖",color:C.y,sections:[
 
@@ -351,7 +352,9 @@ Each FIX concept is modeled as a class.
   {label:"Inheritance",items:["virtual / abstract","Polymorphism","Option hierarchy"],color:C.accent},
   {label:"Applications",items:["BS / MC / Tree","Regression / RL","Trading / VaR"],color:C.y},
 ]}/>
-</>)}
+</>)},
+
+finalExamWrongAnswers
 ]};
 
 export default module6;
